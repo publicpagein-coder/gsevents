@@ -3,7 +3,7 @@
 export type Role = "ORGANIZER" | "SPONSOR" | "GENERAL_USER" | "ADMIN";
 export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type SubscriptionPlan = "BASIC" | "PREMIUM";
-export type EventStatus = "DRAFT" | "PENDING_APPROVAL" | "LIVE" | "CANCELLED";
+export type EventStatus = "DRAFT" | "PENDING_APPROVAL" | "LIVE" | "REJECTED" | "CANCELLED";
 export type TicketOption = "NONE" | "FREE" | "PAID";
 export type InterestStatus = "INTERESTED" | "CONTACTED" | "DEAL_DONE";
 
@@ -49,6 +49,8 @@ export interface Event {
   ticketPrice: number | null;
   maxSeats: number | null;
   status: EventStatus;
+  rejectionReason: string | null;
+  deletedAt: string | null;
   createdAt: string;
 }
 
@@ -85,6 +87,7 @@ export interface AdminLog {
   action: string;
   targetType: string;
   targetId: string;
+  metadata: Record<string, unknown> | null;
   createdAt: string;
 }
 
@@ -100,4 +103,15 @@ export interface PaginatedResponse<T> {
 export interface ApiResponse<T> {
   data: T;
   message?: string;
+}
+
+export interface CursorPaginatedResponse<T> {
+  data: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
+export interface ApiError {
+  error: string;
+  code: string;
 }

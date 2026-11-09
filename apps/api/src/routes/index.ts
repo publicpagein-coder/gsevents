@@ -1,20 +1,24 @@
-import type { Router } from "express";
-import { Router as ExpressRouter } from "express";
+import { Router } from "express";
+import { authRouter } from "./auth";
+import { organizerRouter } from "./organizer";
+import { sponsorRouter } from "./sponsor";
+import { eventsRouter } from "./events";
+import { packagesRouter } from "./packages";
+import { interestsRouter } from "./interests";
+import { adminRouter } from "./admin";
 
-const router: Router = ExpressRouter();
+const router = Router();
 
-// Health check
 router.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Route groups — to be implemented in subsequent tasks
-// router.use("/auth", authRouter);
-// router.use("/events", eventsRouter);
-// router.use("/sponsors", sponsorsRouter);
-// router.use("/organizers", organizersRouter);
-// router.use("/packages", packagesRouter);
-// router.use("/chat", chatRouter);
-// router.use("/admin", adminRouter);
+router.use("/auth", authRouter);
+router.use("/organizer", organizerRouter);
+router.use("/sponsor", sponsorRouter);
+router.use("/events", eventsRouter);
+router.use("/events/:eventId/packages", packagesRouter);
+router.use("/interests", interestsRouter);
+router.use("/admin", adminRouter);
 
 export { router };

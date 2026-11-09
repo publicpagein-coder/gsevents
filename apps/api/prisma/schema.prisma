@@ -33,6 +33,7 @@ enum EventStatus {
   DRAFT
   PENDING_APPROVAL
   LIVE
+  REJECTED
   CANCELLED
 }
 
@@ -106,23 +107,25 @@ model SponsorProfile {
 }
 
 model Event {
-  id           String      @id @default(cuid())
-  organizerId  String
-  title        String
-  description  String
-  city         String
-  state        String
-  startDate    DateTime
-  endDate      DateTime
-  category     String
-  isPublic     Boolean     @default(true)
-  ticketOption TicketOption @default(NONE)
-  ticketPrice  Decimal?    @db.Decimal(10, 2)
-  maxSeats     Int?
-  status       EventStatus @default(DRAFT)
-  createdAt    DateTime    @default(now())
+  id              String       @id @default(cuid())
+  organizerId     String
+  title           String
+  description     String
+  city            String
+  state           String
+  startDate       DateTime
+  endDate         DateTime
+  category        String
+  isPublic        Boolean      @default(true)
+  ticketOption    TicketOption @default(NONE)
+  ticketPrice     Decimal?     @db.Decimal(10, 2)
+  maxSeats        Int?
+  status          EventStatus  @default(DRAFT)
+  rejectionReason String?
+  deletedAt       DateTime?
+  createdAt       DateTime     @default(now())
 
-  organizer           OrganizerProfile    @relation(fields: [organizerId], references: [id])
+  organizer           OrganizerProfile     @relation(fields: [organizerId], references: [id])
   sponsorshipPackages SponsorshipPackage[]
   chatMessages        ChatMessage[]
 
@@ -130,6 +133,7 @@ model Event {
   @@index([city, state])
   @@index([category])
   @@index([startDate])
+  @@index([deletedAt])
 }
 
 model SponsorshipPackage {
@@ -183,10 +187,12 @@ model AdminLog {
   action     String
   targetType String
   targetId   String
+  metadata   Json?
   createdAt  DateTime @default(now())
 
   admin User @relation("AdminLogs", fields: [adminId], references: [id])
 
   @@index([adminId])
   @@index([targetType, targetId])
+  @@index([createdAt])
 }

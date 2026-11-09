@@ -31,7 +31,7 @@ export const CreateEventSchema = z.object({
 });
 
 export const UpdateEventSchema = CreateEventSchema.partial().extend({
-  status: z.enum(["DRAFT", "PENDING_APPROVAL"]).optional(),
+  status: z.enum(["DRAFT", "PENDING_APPROVAL", "REJECTED"]).optional(),
 });
 
 // Sponsorship package schemas
@@ -59,9 +59,15 @@ export const CreateSponsorProfileSchema = z.object({
   companyName: z.string().min(2).max(200),
 });
 
-// Pagination schema
+// Pagination schema (page-based)
 export const PaginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+// Cursor-based pagination schema
+export const CursorPaginationSchema = z.object({
+  cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
@@ -70,7 +76,7 @@ export const EventFilterSchema = PaginationSchema.extend({
   city: z.string().optional(),
   state: z.string().optional(),
   category: z.enum(EVENT_CATEGORIES).optional(),
-  status: z.enum(["DRAFT", "PENDING_APPROVAL", "LIVE", "CANCELLED"]).optional(),
+  status: z.enum(["DRAFT", "PENDING_APPROVAL", "LIVE", "REJECTED", "CANCELLED"]).optional(),
   search: z.string().optional(),
 });
 
@@ -83,4 +89,5 @@ export type UpdatePackageInput = z.infer<typeof UpdatePackageSchema>;
 export type CreateOrganizerProfileInput = z.infer<typeof CreateOrganizerProfileSchema>;
 export type CreateSponsorProfileInput = z.infer<typeof CreateSponsorProfileSchema>;
 export type PaginationInput = z.infer<typeof PaginationSchema>;
+export type CursorPaginationInput = z.infer<typeof CursorPaginationSchema>;
 export type EventFilterInput = z.infer<typeof EventFilterSchema>;
