@@ -1,0 +1,54 @@
+{
+  "app": {
+    "name": "GS Events",
+    "tagline": "Connect Events with Sponsors"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "profile": "Profile",
+    "admin": "Admin",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
+  },
+  "locale": {
+    "en": "English",
+    "hi": "हिन्दी",
+    "gu": "ગુજરાતી",
+    "switchLanguage": "Switch language"
+  },
+  "home": {
+    "title": "Find Your Ideal Sponsorship",
+    "subtitle": "Browse events and connect with organizers looking for sponsors"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "phoneNumber": "Phone Number",
+    "otp": "One-Time Password",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "resendOtp": "Resend OTP",
+    "roleOrganizer": "Event Organizer",
+    "roleSponsor": "Sponsor",
+    "chooseRole": "I want to…"
+  }
+}

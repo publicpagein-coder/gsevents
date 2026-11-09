@@ -1,0 +1,56 @@
+---
+description: "Core project context and conventions for the event sponsorship marketplace"
+globs:
+alwaysApply: true
+---
+
+# Project: Event Sponsorship Marketplace (Stage 1)
+
+A mobile-first platform where event organizers list events with sponsorship packages, sponsors browse and show interest, and both sides chat. Admin verifies organizers and approves listings. First market: Navratri and Garba events in Gujarat. Built so new cities, event types, seasons and languages are added as data, not code.
+
+User types: organizer, sponsor, general (browse only in Stage 1), admin.
+
+## Source of truth
+
+Read these before building a feature. Do not invent requirements that are not in them. If something is unclear or missing, stop and ask, or note it as an open item.
+
+- `docs/business-model.md`
+- `docs/nfr.md`
+- `docs/srs-stage1.md` (requirement IDs such as FR-AUTH-01, BR-03)
+- `docs/database-design.md`
+- `supabase/migrations/` (the database schema; it is the real data model)
+
+## Stack
+
+- Next.js (App Router) with TypeScript in strict mode
+- Tailwind CSS and shadcn/ui
+- Supabase: Postgres, Auth (phone OTP), Storage, Realtime
+- next-intl for interface text in English (en), Hindi (hi) and Gujarati (gu)
+- Zod for input validation
+- Hosting on Vercel
+
+Ask before adding any new dependency or service.
+
+## Scope
+
+- Build Stage 1 only: no deal payments, no ticket sales, no premium sponsor plan, no commission.
+- The only payments are the platform's own fees (organizer listing fee, sponsor subscription), and they come last.
+
+## Conventions
+
+- Money is stored as integer paise. Show rupees only in the UI, with Indian number grouping.
+- No hard-coded interface text. Every visible string goes in the next-intl message files for en, hi and gu.
+- Mobile-first layouts. Keep pages light, because many users have average mobile networks.
+- Validate every input with Zod on the server, even if the client also validates.
+- Never edit a migration that has already been applied. Add a new migration instead.
+- Every new table gets Row Level Security and policies in the same migration.
+- Business rules live in the database or server code, not only in the UI.
+- Mention the requirement ID (for example FR-EVT-05) in code comments and commit messages for non-obvious logic.
+- Keep functions small, name things after the domain (organizer, sponsor, event, package, interest), and write tests for business rules and access rules.
+
+## How to work
+
+1. For each task, first write a short plan: files to create or change, and what you will not touch. Wait for approval.
+2. Build one slice at a time, following the SRS module order. Do not start the next module on your own.
+3. After the change, list what to test by hand, including a test for each user role.
+4. If a requirement conflicts with the database schema, report the conflict and do not silently change either one.

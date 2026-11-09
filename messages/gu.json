@@ -1,0 +1,54 @@
+{
+  "app": {
+    "name": "GS ઇવેન્ટ્સ",
+    "tagline": "ઇવેન્ટ્સ અને સ્પોન્સર્સને જોડો"
+  },
+  "common": {
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "કંઈક ખોટું થયું",
+    "submit": "સબમિટ કરો",
+    "cancel": "રદ કરો",
+    "save": "સાચવો",
+    "edit": "સંપાદિત કરો",
+    "delete": "કાઢો",
+    "back": "પાછળ",
+    "next": "આગળ",
+    "confirm": "પુષ્ટિ કરો",
+    "search": "શોધો",
+    "filter": "ફિલ્ટર",
+    "viewAll": "બધું જુઓ",
+    "learnMore": "વધુ જાણો",
+    "required": "જરૂરી",
+    "optional": "વૈકલ્પિક"
+  },
+  "nav": {
+    "home": "હોમ",
+    "events": "ઇવેન્ટ્સ",
+    "profile": "પ્રોફાઇલ",
+    "admin": "એડમિન",
+    "signIn": "સાઇન ઇન",
+    "signOut": "સાઇન આઉટ"
+  },
+  "locale": {
+    "en": "English",
+    "hi": "हिन्दी",
+    "gu": "ગુજરાતી",
+    "switchLanguage": "ભાષા બદલો"
+  },
+  "home": {
+    "title": "તમારી આદર્શ સ્પોન્સરશિપ શોધો",
+    "subtitle": "ઇવેન્ટ્સ બ્રાઉઝ કરો અને સ્પોન્સર શોધી રહેલા આયોજકો સાથે જોડાઓ"
+  },
+  "auth": {
+    "signIn": "સાઇન ઇન",
+    "signUp": "સાઇન અપ",
+    "phoneNumber": "ફોન નંબર",
+    "otp": "વન-ટાઇમ પાસવર્ડ",
+    "sendOtp": "OTP મોકલો",
+    "verifyOtp": "OTP ચકાસો",
+    "resendOtp": "OTP ફરી મોકલો",
+    "roleOrganizer": "ઇવેન્ટ આયોજક",
+    "roleSponsor": "સ્પોન્સર",
+    "chooseRole": "હું ઇચ્છું છું…"
+  }
+}
