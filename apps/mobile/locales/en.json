@@ -1,0 +1,22 @@
+{
+  "common": {
+    "appName": "GSEvents",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "submit": "Submit"
+  },
+  "auth": {
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+91 XXXXX XXXXX",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "otpLabel": "Enter OTP"
+  },
+  "home": {
+    "title": "Discover Events",
+    "searchPlaceholder": "Search events..."
+  }
+}

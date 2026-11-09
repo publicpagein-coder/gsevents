@@ -1,0 +1,22 @@
+{
+  "common": {
+    "appName": "GSEvents",
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हो गया",
+    "retry": "पुनः प्रयास",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "submit": "जमा करें"
+  },
+  "auth": {
+    "phoneLabel": "फ़ोन नंबर",
+    "phonePlaceholder": "+91 XXXXX XXXXX",
+    "sendOtp": "OTP भेजें",
+    "verifyOtp": "OTP सत्यापित करें",
+    "otpLabel": "OTP दर्ज करें"
+  },
+  "home": {
+    "title": "इवेंट खोजें",
+    "searchPlaceholder": "इवेंट खोजें..."
+  }
+}
