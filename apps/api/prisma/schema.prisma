@@ -1,0 +1,192 @@
+// This is your Prisma schema file.
+// Learn more about it at https://pris.ly/d/prisma-schema
+// Connection pooling: add ?connection_limit=10&pool_timeout=20 to DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ORGANIZER
+  SPONSOR
+  GENERAL_USER
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SubscriptionPlan {
+  BASIC
+  PREMIUM
+}
+
+enum EventStatus {
+  DRAFT
+  PENDING_APPROVAL
+  LIVE
+  CANCELLED
+}
+
+enum TicketOption {
+  NONE
+  FREE
+  PAID
+}
+
+enum InterestStatus {
+  INTERESTED
+  CONTACTED
+  DEAL_DONE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  role      Role     @default(GENERAL_USER)
+  name      String?
+  createdAt DateTime @default(now())
+
+  organizerProfile  OrganizerProfile?
+  sponsorProfile    SponsorProfile?
+  sentMessages      ChatMessage[]     @relation("SentMessages")
+  receivedMessages  ChatMessage[]     @relation("ReceivedMessages")
+  adminLogs         AdminLog[]        @relation("AdminLogs")
+
+  @@index([phone])
+  @@index([role])
+}
+
+model OtpVerification {
+  id        String   @id @default(cuid())
+  phone     String
+  otp       String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model OrganizerProfile {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  orgName            String
+  societyName        String?
+  venueName          String?
+  socialLink         String?
+  verificationStatus VerificationStatus @default(PENDING)
+  adminNotes         String?
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[]
+
+  @@index([verificationStatus])
+}
+
+model SponsorProfile {
+  id                    String           @id @default(cuid())
+  userId                String           @unique
+  companyName           String
+  subscriptionPlan      SubscriptionPlan @default(BASIC)
+  subscriptionExpiresAt DateTime?
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interests SponsorInterest[]
+
+  @@index([subscriptionPlan])
+}
+
+model Event {
+  id           String      @id @default(cuid())
+  organizerId  String
+  title        String
+  description  String
+  city         String
+  state        String
+  startDate    DateTime
+  endDate      DateTime
+  category     String
+  isPublic     Boolean     @default(true)
+  ticketOption TicketOption @default(NONE)
+  ticketPrice  Decimal?    @db.Decimal(10, 2)
+  maxSeats     Int?
+  status       EventStatus @default(DRAFT)
+  createdAt    DateTime    @default(now())
+
+  organizer           OrganizerProfile    @relation(fields: [organizerId], references: [id])
+  sponsorshipPackages SponsorshipPackage[]
+  chatMessages        ChatMessage[]
+
+  @@index([status])
+  @@index([city, state])
+  @@index([category])
+  @@index([startDate])
+}
+
+model SponsorshipPackage {
+  id             String @id @default(cuid())
+  eventId        String
+  title          String
+  description    String
+  priceInr       Decimal @db.Decimal(10, 2)
+  perks          String[]
+  availableSlots Int
+
+  event     Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  interests SponsorInterest[]
+
+  @@index([eventId])
+}
+
+model SponsorInterest {
+  id        String         @id @default(cuid())
+  sponsorId String
+  packageId String
+  status    InterestStatus @default(INTERESTED)
+  createdAt DateTime       @default(now())
+
+  sponsor SponsorProfile     @relation(fields: [sponsorId], references: [id])
+  package SponsorshipPackage @relation(fields: [packageId], references: [id])
+
+  @@unique([sponsorId, packageId])
+  @@index([status])
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  eventId    String?
+  content    String
+  createdAt  DateTime @default(now())
+
+  fromUser User   @relation("SentMessages", fields: [fromUserId], references: [id])
+  toUser   User   @relation("ReceivedMessages", fields: [toUserId], references: [id])
+  event    Event? @relation(fields: [eventId], references: [id])
+
+  @@index([fromUserId, toUserId])
+  @@index([eventId])
+}
+
+model AdminLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String
+  targetType String
+  targetId   String
+  createdAt  DateTime @default(now())
+
+  admin User @relation("AdminLogs", fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+}
