@@ -1,39 +1,55 @@
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp
 .pnp.js
-.yarn/install-state.gz
 
-# testing
-/coverage
+# Build outputs
+dist/
+build/
+.next/
+out/
+.expo/
+.turbo/
 
-# next.js
-/.next/
-/out/
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# production
-/build
+# Prisma
+prisma/migrations/
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# local env files
-.env*.local
-.env
+# OS
+.DS_Store
+Thumbs.db
 
-# vercel
-.vercel
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# typescript
+# Testing
+coverage/
+
+# TypeScript
 *.tsbuildinfo
-next-env.d.ts
 
-# supabase local
-supabase/.branches
-supabase/.temp
+# Expo
+.expo/
+web-build/
+android/
+ios/
+
+# Misc
+*.orig
