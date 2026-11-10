@@ -1,4 +1,4 @@
-# GS Events — Event Sponsorship Marketplace
+# GS Events — 
 
 A mobile-first web platform connecting event organisers and sponsors, with built-in admin verification, in-app chat, and multilingual support (English, Hindi, Gujarati). First market: Navratri and Garba events in Gujarat.
 
