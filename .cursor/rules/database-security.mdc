@@ -1,0 +1,44 @@
+---
+description: "Database, access control and security rules for Supabase and API code"
+globs: supabase/**/*,src/lib/supabase/**/*,src/app/api/**/*
+alwaysApply: false
+---
+
+# Database and Security Rules
+
+## Access control
+
+- Row Level Security stays enabled on every table. Never disable it and never add a policy that allows everything to bypass a problem. Fix the policy instead.
+- The browser uses only the anon key and the signed-in user's session.
+- The service role key is used only in server code (route handlers, server actions, webhooks), is read from environment variables, and never appears in client code, logs or the repository.
+- Check the user's role on the server for every sensitive action. Never trust a role, user id or status sent from the client.
+- Users must not change their own role, organizer verification fields, sponsor plan, subscription dates or event status beyond the allowed steps. These are protected by database triggers. Do not remove or work around those triggers.
+- Event status moves only by the allowed steps: an organizer can submit a draft or rejected event for review, or cancel it. Publishing, rejecting and completing are admin or service-role actions.
+
+## Privacy and contact sharing
+
+- Never return another user's phone number unless `interests.contact_shared` is true for that interest.
+- Do not log phone numbers, OTPs, tokens or payment details.
+- Private events are visible to sponsors only. Public events are visible to everyone.
+
+## Auth and OTP
+
+- Sign-in is by phone number and OTP. Rate limit OTP requests and verification attempts.
+- In development use test numbers or a test setup so real SMS are not sent.
+- Only organizer, sponsor or general can be chosen at signup. Admin accounts are created by the platform team.
+
+## Files and uploads
+
+- Validate file type and size for every upload (event images, proof documents). Reject anything else.
+- Use private storage buckets unless a file must be public, and set storage policies in migrations.
+
+## Migrations
+
+- Put every schema change in a new, ordered migration file with RLS policies included.
+- Keep money columns as integer paise and timestamps as timestamptz.
+- After any schema change, update `docs/database-design.md` and tell me what changed.
+
+## Payments (later stage)
+
+- Webhook handlers must verify the gateway signature and be idempotent. A repeated webhook must never create a duplicate payment or refund.
+- Payment status changes are made only by server code or the service role, never by the client.
