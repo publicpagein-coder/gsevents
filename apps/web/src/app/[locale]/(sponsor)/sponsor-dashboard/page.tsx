@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/server'
+import { safeStr } from '@/lib/db-utils'
 import Link from 'next/link'
 
 export default async function SponsorDashboardPage({
@@ -12,15 +13,16 @@ export default async function SponsorDashboardPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { data: profile } = await supabase
+  const profileResult = await supabase
     .from('profiles')
     .select('full_name')
     .eq('id', user!.id)
     .single()
 
-  const fullName = typeof profile?.full_name === 'string' ? profile.full_name : ''
-  return <DashboardContent locale={locale} name={fullName} />
+  // Extract only the primitive string we need — never pass DB result objects to Client Components
+  const name = safeStr(profileResult.data, 'full_name') ?? ''
+
+  return <DashboardContent locale={locale} name={name} />
 }
 
 function DashboardContent({ locale, name }: { locale: string; name: string }) {

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { safeStr } from '@/lib/db-utils'
 
 export default async function SponsorLayout({
   children,
@@ -17,14 +18,16 @@ export default async function SponsorLayout({
     redirect(`/${locale}/login`)
   }
 
-  const { data: profile } = await supabase
+  const profileResult = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  if (!profile || profile.role !== 'sponsor') {
-    if (profile?.role === 'organizer') redirect(`/${locale}/organizer-dashboard`)
+  const role = safeStr(profileResult.data, 'role')
+
+  if (role !== 'sponsor') {
+    if (role === 'organizer') redirect(`/${locale}/organizer-dashboard`)
     else redirect(`/${locale}/role-choice`)
   }
 

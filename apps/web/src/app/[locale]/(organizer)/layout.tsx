@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { safeStr } from '@/lib/db-utils'
 
 export default async function OrganizerLayout({
   children,
@@ -17,15 +18,17 @@ export default async function OrganizerLayout({
     redirect(`/${locale}/login`)
   }
 
-  // Fetch actual DB role (authoritative source — metadata can be stale)
-  const { data: profile } = await supabase
+  // Fetch DB role — authoritative source, not the JWT metadata
+  const profileResult = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  if (!profile || profile.role !== 'organizer') {
-    if (profile?.role === 'sponsor') redirect(`/${locale}/sponsor-dashboard`)
+  const role = safeStr(profileResult.data, 'role')
+
+  if (role !== 'organizer') {
+    if (role === 'sponsor') redirect(`/${locale}/sponsor-dashboard`)
     else redirect(`/${locale}/role-choice`)
   }
 
