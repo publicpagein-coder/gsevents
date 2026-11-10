@@ -1,0 +1,93 @@
+{
+  "common": {
+    "appName": "GSEvents",
+    "loading": "લોડ થઈ રહ્યું છે…",
+    "save": "સાચવો",
+    "cancel": "રદ કરો",
+    "back": "પાછળ",
+    "error": "કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.",
+    "required": "આ ફીલ્ડ જરૂરી છે"
+  },
+  "nav": {
+    "home": "હોમ",
+    "profile": "પ્રોફાઇલ",
+    "dashboard": "ડેશબોર્ડ",
+    "login": "સાઇન ઇન",
+    "logout": "સાઇન આઉટ",
+    "logoutAll": "બધા ઉપકરણોમાંથી સાઇન આઉટ"
+  },
+  "auth": {
+    "login": {
+      "title": "GSEventsમાં સાઇન ઇન કરો",
+      "subtitle": "એક વખતનો પાસવર્ડ મેળવવા માટે તમારો મોબાઇલ નંબર દાખલ કરો",
+      "phonePlaceholder": "+91 98765 43210",
+      "phoneLabel": "મોબાઇલ નંબર",
+      "phoneHint": "દેશ કોડ સહિત, દા.ત. +91",
+      "sendOtp": "OTP મોકલો",
+      "sending": "મોકલી રહ્યા છીએ…",
+      "invalidPhone": "દેશ કોડ સહિત માન્ય મોબાઇલ નંબર દાખલ કરો"
+    },
+    "verify": {
+      "title": "ચકાસણી કોડ દાખલ કરો",
+      "subtitle": "{phone} પર 6 અંકનો કોડ મોકલ્યો",
+      "otpLabel": "એક વખતનો પાસવર્ડ",
+      "otpPlaceholder": "123456",
+      "verify": "ચકાસો",
+      "verifying": "ચકાસી રહ્યા છીએ…",
+      "resend": "OTP ફરી મોકલો",
+      "resending": "મોકલી રહ્યા છીએ…",
+      "wrongNumber": "ખોટો નંબર?",
+      "invalidOtp": "તમારા ફોન પર મોકલ્યો 6 અંકનો કોડ દાખલ કરો",
+      "expired": "કોડ સમાપ્ત થઈ ગયો. નવો કોડ માગો."
+    },
+    "roleChoice": {
+      "title": "તમે GSEvents કેવી રીતે ઉપયોગ કરશો?",
+      "subtitle": "તમારી ભૂમિકા પસંદ કરો. તે પછીથી બદલી શકાશે નહીં.",
+      "organizerTitle": "આયોજક",
+      "organizerDesc": "હું ઇવેન્ટ યોજું છું અને સ્પોન્સર ઇચ્છું છું",
+      "sponsorTitle": "સ્પોન્સર",
+      "sponsorDesc": "હું ઇવેન્ટ શોધવા અને સ્પોન્સર કરવા ઇચ્છું છું",
+      "continue": "આગળ વધો",
+      "continuing": "સાચવી રહ્યા છીએ…"
+    }
+  },
+  "profile": {
+    "title": "તમારી પ્રોફાઇલ",
+    "fullName": "પૂરું નામ",
+    "fullNamePlaceholder": "તમારું પૂરું નામ",
+    "phone": "મોબાઇલ નંબર",
+    "phoneReadOnly": "સાઇનઅપ પછી ફોન બદલી શકાતો નથી",
+    "city": "શહેર",
+    "cityPlaceholder": "તમારું શહેર પસંદ કરો",
+    "language": "પ્રિય ભાષા",
+    "saving": "સાચવી રહ્યા છીએ…",
+    "saved": "પ્રોફાઇલ સાચવ્યી",
+    "logoutSection": "ખાતું",
+    "logoutCurrentSession": "સાઇન આઉટ",
+    "logoutCurrentSessionDesc": "આ ઉપકરણ પરથી સાઇન આઉટ",
+    "logoutAllSessions": "બધા ઉપકરણોમાંથી સાઇન આઉટ",
+    "logoutAllSessionsDesc": "જ્યાં તમે સાઇન ઇન છો ત્યાંથી સાઇન આઉટ",
+    "languages": {
+      "en": "English",
+      "hi": "हिन्दी",
+      "gu": "ગુજરાતી"
+    }
+  },
+  "dashboard": {
+    "organizer": {
+      "title": "આયોજક ડેશબોર્ડ",
+      "welcome": "સ્વાગત છે, {name}!",
+      "completeProfile": "ઇવેન્ટ સૂચિ શરૂ કરવા માટે તમારી આયોજક પ્રોફાઇલ પૂર્ણ કરો."
+    },
+    "sponsor": {
+      "title": "સ્પોન્સર ડેશબોર્ડ",
+      "welcome": "સ્વાગત છે, {name}!",
+      "completeProfile": "ઇવેન્ટ શોધવાનું શરૂ કરવા માટે તમારી સ્પોન્સર પ્રોફાઇલ પૂર્ણ કરો."
+    }
+  },
+  "home": {
+    "headline": "ઇવેન્ટ્સ અને સ્પોન્સર્સ ને જોડો",
+    "subheadline": "નવરાત્રી, ગરબા, દિવાળી મેળા અને ભારત ભરના ઇવેન્ટ્સ માટે માર્કેટ.",
+    "cta": "ઇવેન્ટ્સ જુઓ"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "common": {
+    "appName": "GSEvents",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "error": "Something went wrong. Please try again.",
+    "required": "This field is required"
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "logoutAll": "Sign out from all devices"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to GSEvents",
+      "subtitle": "Enter your mobile number to receive a one-time password",
+      "phonePlaceholder": "+91 98765 43210",
+      "phoneLabel": "Mobile number",
+      "phoneHint": "Include country code, e.g. +91",
+      "sendOtp": "Send OTP",
+      "sending": "Sending…",
+      "invalidPhone": "Enter a valid mobile number with country code"
+    },
+    "verify": {
+      "title": "Enter verification code",
+      "subtitle": "We sent a 6-digit code to {phone}",
+      "otpLabel": "One-time password",
+      "otpPlaceholder": "123456",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "resend": "Resend OTP",
+      "resending": "Resending…",
+      "wrongNumber": "Wrong number?",
+      "invalidOtp": "Enter the 6-digit code sent to your phone",
+      "expired": "Code expired. Request a new one."
+    },
+    "roleChoice": {
+      "title": "How will you use GSEvents?",
+      "subtitle": "Choose your role. You cannot change it later.",
+      "organizerTitle": "Organizer",
+      "organizerDesc": "I host events and want to attract sponsors",
+      "sponsorTitle": "Sponsor",
+      "sponsorDesc": "I want to discover events and sponsor them",
+      "continue": "Continue",
+      "continuing": "Saving…"
+    }
+  },
+  "profile": {
+    "title": "Your profile",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "phone": "Mobile number",
+    "phoneReadOnly": "Phone cannot be changed after signup",
+    "city": "City",
+    "cityPlaceholder": "Select your city",
+    "language": "Preferred language",
+    "saving": "Saving…",
+    "saved": "Profile saved",
+    "logoutSection": "Account",
+    "logoutCurrentSession": "Sign out",
+    "logoutCurrentSessionDesc": "Sign out from this device",
+    "logoutAllSessions": "Sign out from all devices",
+    "logoutAllSessionsDesc": "Sign out from every device where you're signed in",
+    "languages": {
+      "en": "English",
+      "hi": "हिन्दी",
+      "gu": "ગુજરાતી"
+    }
+  },
+  "dashboard": {
+    "organizer": {
+      "title": "Organizer Dashboard",
+      "welcome": "Welcome, {name}!",
+      "completeProfile": "Complete your organizer profile to start listing events."
+    },
+    "sponsor": {
+      "title": "Sponsor Dashboard",
+      "welcome": "Welcome, {name}!",
+      "completeProfile": "Complete your sponsor profile to start browsing events."
+    }
+  },
+  "home": {
+    "headline": "Connect events with sponsors",
+    "subheadline": "The marketplace for Navratri, Garba, Diwali fairs, and more across India.",
+    "cta": "Browse events"
+  }
+}
