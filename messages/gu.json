@@ -148,7 +148,8 @@
     "queues": {
       "organizers": "આયોજક કતાર",
       "events": "ઇવેન્ટ કતાર",
-      "changes": "ફેરફાર વિનંતીઓ"
+      "changes": "ફેરફાર વિનંતીઓ",
+      "fees": "ફી"
     },
     "pending": "બાકી",
     "organizerQueue": {
@@ -237,6 +238,85 @@
       "launchOfferPlaceholder": "સ્પોન્સર્સ માટે વૈકલ્પિક પ્રમોશનલ સંદેશ",
       "saveSuccess": "સેટિંગ્સ સાચવ્યા.",
       "note": "ફેરફારો નવા ઓર્ડર પર તરત લાગુ. હાલના ઓર્ડર પ્રભાવિત નહીં."
+    }
+  },
+  "fees": {
+    "checkoutName": "GS Events",
+    "payButton": "{amount} ચૂકવો",
+    "checkoutLoadError": "પેમેન્ટ ફોર્મ લોડ થયું નહીં. ફરી પ્રયાસ કરો.",
+    "paymentSubmittedTitle": "પેમેન્ટ સબમિટ થયું",
+    "paymentSubmittedBody": "અમે તમારું પેમેન્ટ ચકાસી રહ્યા છીએ. ચકાસણી પછી આ પેજ અપડેટ થશે.",
+    "amount": "રકમ",
+    "gstin": "GSTIN: {gstin}",
+    "settingsUnavailable": "ફી સેટિંગ્સ ઉપલબ્ધ નથી. પછી પ્રયાસ કરો.",
+    "types": {
+      "event_listing": "ઇવેન્ટ લિસ્ટિંગ ફી",
+      "sponsor_subscription": "સ્પોન્સર સબ્સ્ક્રિપ્શન"
+    },
+    "listing": {
+      "title": "લિસ્ટિંગ ફી ચૂકવો",
+      "subtitle": "ડ્રાફ્ટ ઇવેન્ટ સમીક્ષા માટે સબમિટ કરવા લિસ્ટિંગ ફી ચૂકવો.",
+      "event": "ઇવેન્ટ",
+      "startDate": "શરૂ તારીખ",
+      "status": "સ્થિતિ",
+      "gstIncluded": "GST સહિત (કરપાત્ર {base} + GST {gst})",
+      "checkoutDescription": "{title} માટે લિસ્ટિંગ ફી",
+      "alreadyPaidTitle": "લિસ્ટિંગ ફી પહેલેથી ચૂકવાઈ",
+      "alreadyPaidBody": "આ ઇવેન્ટની લિસ્ટિંગ ફી {amount} પહેલેથી ચૂકવાઈ છે.",
+      "notDraftTitle": "ડ્રાફ્ટ નથી",
+      "notDraftBody": "પહેલી સબમિશન માટે માત્ર ડ્રાફ્ટ ઇવેન્ટની લિસ્ટિંગ ફી ચૂકવી શકાય.",
+      "deadlineTitle": "પેમેન્ટની સમયમર્યાદા પૂરી",
+      "deadlineBody": "લિસ્ટિંગ ફી ઇવેન્ટ શરૂ થાય તેના ઓછામાં ઓછા 7 દિવસ પહેલાં ચૂકવવી જોઈએ."
+    },
+    "subscription": {
+      "title": "સ્પોન્સર સબ્સ્ક્રિપ્શન",
+      "subtitle": "રસ અને ચેટ અનલૉક કરવા વાર્ષિક સબ્સ્ક્રિપ્શન ચૂકવો.",
+      "breakdown": "આધાર {base} + GST {gst}",
+      "checkoutDescription": "વાર્ષિક સ્પોન્સર સબ્સ્ક્રિપ્શન",
+      "noProfile": "સ્પોન્સર પ્રોફાઇલ મળી નહીં.",
+      "activeTitle": "સબ્સ્ક્રિપ્શન સક્રિય",
+      "activeBody": "તમારું સબ્સ્ક્રિપ્શન {expires} સુધી સક્રિય છે. વધારવા વહેલું રિન્યૂ કરી શકો."
+    },
+    "history": {
+      "title": "ફી ઇતિહાસ",
+      "subtitle": "તમારા પ્લેટફોર્મ ફી પેમેન્ટ અને રસીદો.",
+      "back": "હોમ",
+      "backToHistory": "ફી ઇતિહાસ પર પાછા",
+      "empty": "હજુ કોઈ ફી નથી.",
+      "type": "પ્રકાર",
+      "amount": "રકમ",
+      "status": "સ્થિતિ",
+      "date": "તારીખ",
+      "receipt": "રસીદ",
+      "viewReceipt": "જુઓ",
+      "split": "આધાર {base} · GST {gst}",
+      "noGstin": "ફી સેટિંગ્સમાં ઉમેર્યા પછી GSTIN રસીદ પર દેખાશે."
+    },
+    "receipt": {
+      "title": "રસીદ",
+      "type": "ફી પ્રકાર",
+      "status": "સ્થિતિ",
+      "amount": "કુલ ચૂકવેલ",
+      "base": "કરપાત્ર મૂલ્ય",
+      "gst": "GST",
+      "gstin": "GSTIN",
+      "created": "બનાવ્યું",
+      "paidAt": "ચૂકવ્યું",
+      "orderId": "ઓર્ડર સંદર્ભ",
+      "refundReason": "રિફંડ કારણ"
+    },
+    "refund": {
+      "reasonLabel": "રિફંડ કારણ (પેમેન્ટ ભૂલ)",
+      "reasonPlaceholder": "દા.ત. ડુપ્લિકેટ ચાર્જ — Razorpay ડેશબોર્ડમાં રિફંડ",
+      "submit": "રિફંડ તરીકે ચિહ્નિત કરો",
+      "success": "ફી રિફંડ તરીકે ચિહ્નિત."
+    },
+    "admin": {
+      "title": "પ્લેટફોર્મ ફી",
+      "subtitle": "તાજેતરના ફી પેમેન્ટ. સપોર્ટ એડમિન પેમેન્ટ-ભૂલ રિફંડ ચિહ્નિત કરી શકે.",
+      "supportOnly": "રિફંડ ચિહ્નિત કરવા સપોર્ટ પરવાનગી જરૂરી છે.",
+      "empty": "હજુ કોઈ ફી નથી.",
+      "actions": "ક્રિયાઓ"
     }
   }
 }

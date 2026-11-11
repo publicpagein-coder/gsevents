@@ -150,18 +150,36 @@ UNIQUE INDEX on `(sponsor_id, event_id, coalesce(package_id, '00000000-...'::uui
 
 ### `platform_fees`
 
-| Column                      | Type                                    | Notes                                |
-| --------------------------- | --------------------------------------- | ------------------------------------ |
-| `id`                        | `uuid` PK                               |                                      |
-| `user_id`                   | `uuid` NOT NULL                         | FK → `profiles(id)`                  |
-| `event_id`                  | `uuid`                                  | FK → `events(id)` ON DELETE SET NULL |
-| `fee_type`                  | `fee_type` NOT NULL                     |                                      |
-| `amount_paise`              | `bigint` NOT NULL CHECK >= 0            |                                      |
-| `status`                    | `fee_status` NOT NULL DEFAULT `pending` | Service role only writes             |
-| `gateway_order_id`          | `text`                                  |                                      |
-| `gateway_payment_id`        | `text`                                  |                                      |
-| `refund_reason`             | `text`                                  | e.g. listing rejected by platform    |
-| `created_at` / `updated_at` | `timestamptz`                           |                                      |
+| Column                      | Type                                    | Notes                                                                 |
+| --------------------------- | --------------------------------------- | --------------------------------------------------------------------- |
+| `id`                        | `uuid` PK                               |                                                                       |
+| `user_id`                   | `uuid` NOT NULL                         | FK → `profiles(id)`                                                   |
+| `event_id`                  | `uuid`                                  | FK → `events(id)` ON DELETE SET NULL                                  |
+| `fee_type`                  | `fee_type` NOT NULL                     |                                                                       |
+| `amount_paise`              | `bigint` NOT NULL CHECK >= 0            | Total charged (listing: GST-inclusive; subscription: base + GST)     |
+| `base_paise`                | `bigint`                                | Taxable value (BR-11 / FR-FEE-05)                                     |
+| `gst_paise`                 | `bigint`                                | GST portion                                                           |
+| `status`                    | `fee_status` NOT NULL DEFAULT `pending` | Service role / support writes only                                    |
+| `gateway_order_id`          | `text`                                  | Unique when set (idempotent orders)                                   |
+| `gateway_payment_id`        | `text`                                  | Unique when set (idempotent webhooks)                                 |
+| `refund_reason`             | `text`                                  | Payment-error refunds only (BR-07, BR-16)                             |
+| `paid_at`                   | `timestamptz`                           | Set by webhook; drives 48-hour review timer (BR-12)                   |
+| `review_alert_sent_at`      | `timestamptz`                           | Overdue-review email throttle                                         |
+| `created_at` / `updated_at` | `timestamptz`                           |                                                                       |
+
+### `settings`
+
+Singleton fee configuration (id = 1). Readable by authenticated users; writable by `super_admin` only (FR-ADM-10, FR-FEE-06).
+
+| Column                   | Type              | Notes                                              |
+| ------------------------ | ----------------- | -------------------------------------------------- |
+| `id`                     | `integer` PK      | Always `1`                                         |
+| `listing_fee_paise`      | `bigint` NOT NULL | GST-inclusive listing total (default 10000)        |
+| `subscription_fee_paise` | `bigint` NOT NULL | Subscription base before GST (default 50000)       |
+| `gst_rate_pct`           | `numeric(5,2)`    | Default 18.00                                      |
+| `gstin`                  | `text`            | Optional until registered; shown on receipts if set |
+| `launch_offer_text`      | `text`            | Configurable first-year sponsor offer copy         |
+| `updated_at`             | `timestamptz`     |                                                    |
 
 ### `audit_log`
 
