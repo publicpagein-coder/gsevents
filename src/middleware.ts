@@ -72,16 +72,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Not signed in — gate non-public routes
+  // FR-AUTH-05: Unauthenticated users hitting any non-public route → sign-in.
+  // isPublicPath() already returned above for public paths, so any route
+  // reaching here requires authentication.
   if (!user) {
-    if (
-      logicalPath.startsWith("/admin") ||
-      logicalPath.startsWith("/organizer") ||
-      logicalPath.startsWith("/profile")
-    ) {
-      return redirectTo("/auth/sign-in");
-    }
-    return response;
+    return redirectTo("/auth/sign-in");
   }
 
   // Fetch the profile row to check role and organizer profile completion.
