@@ -19,7 +19,12 @@
     "viewAll": "View all",
     "learnMore": "Learn more",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reason": "Reason",
+    "noResults": "No items found",
+    "actions": "Actions"
   },
   "nav": {
     "home": "Home",
@@ -50,5 +55,137 @@
     "roleOrganizer": "Event Organizer",
     "roleSponsor": "Sponsor",
     "chooseRole": "I want to…"
+  },
+  "org": {
+    "profileComplete": {
+      "title": "Complete Your Organizer Profile",
+      "subtitle": "Tell us about your organization so we can verify you.",
+      "orgName": "Organization Name",
+      "orgNamePlaceholder": "e.g. Ahmedabad Cultural Society",
+      "orgType": "Organization Type",
+      "orgTypePlaceholder": "Select type",
+      "orgTypeSociety": "Society",
+      "orgTypeClub": "Club",
+      "orgTypeCompany": "Company",
+      "orgTypeOther": "Other",
+      "venueName": "Primary Venue / Area",
+      "venueNamePlaceholder": "e.g. GMDC Ground, Ahmedabad",
+      "socialLink": "Social Media Page",
+      "socialLinkPlaceholder": "https://instagram.com/your-page (optional)",
+      "proofNote": "Proof Note",
+      "proofNotePlaceholder": "e.g. Registered as XYZ Society, reg. no. ABC123; or link to a past event (optional)",
+      "submitButton": "Submit for Review",
+      "successTitle": "Profile submitted!",
+      "successMessage": "Your profile is under review. We will get back to you shortly."
+    },
+    "pending": {
+      "title": "Application Under Review",
+      "message": "Your organizer profile has been submitted and is awaiting admin approval. You will be able to access the organizer dashboard once approved.",
+      "contactSupport": "If you have questions, please contact support."
+    },
+    "rejected": {
+      "title": "Application Not Approved",
+      "message": "Unfortunately, your organizer application was not approved.",
+      "reasonLabel": "Reason provided:",
+      "noReason": "No reason provided.",
+      "contactSupport": "Please contact support to understand what needs to be corrected, then update your profile and resubmit.",
+      "updateProfile": "Update Profile"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "queues": {
+      "organizers": "Organizer Queue",
+      "events": "Event Queue",
+      "changes": "Change Requests"
+    },
+    "pending": "Pending",
+    "organizerQueue": {
+      "title": "Pending Organizer Verifications",
+      "empty": "No organizers awaiting verification.",
+      "orgName": "Organization",
+      "orgType": "Type",
+      "venueName": "Venue",
+      "socialLink": "Social Link",
+      "proofNote": "Proof Note",
+      "phone": "Phone",
+      "submittedAt": "Submitted",
+      "approveConfirm": "Approve this organizer?",
+      "rejectConfirm": "Reject this organizer",
+      "rejectReasonRequired": "Please provide a rejection reason.",
+      "approveSuccess": "Organizer approved.",
+      "rejectSuccess": "Organizer rejected."
+    },
+    "eventQueue": {
+      "title": "Pending Event Reviews",
+      "empty": "No events awaiting review.",
+      "eventName": "Event",
+      "organizer": "Organizer",
+      "dates": "Dates",
+      "city": "City",
+      "paidAt": "Paid at",
+      "timeInQueue": "In queue",
+      "overdueLabel": "Overdue",
+      "noLetter": "No letter",
+      "approveConfirm": "Publish this event?",
+      "rejectConfirm": "Reject this event",
+      "rejectReasonRequired": "Please provide a rejection reason.",
+      "approveSuccess": "Event published.",
+      "rejectSuccess": "Event rejected."
+    },
+    "changeQueue": {
+      "title": "Pending Change Requests",
+      "empty": "No change requests awaiting review.",
+      "eventName": "Event",
+      "submittedAt": "Submitted",
+      "proposedChanges": "Proposed Changes",
+      "currentValue": "Current",
+      "proposedValue": "Proposed",
+      "newLetter": "New authority letter",
+      "viewLetter": "View letter",
+      "approveConfirm": "Apply these changes to the event?",
+      "rejectConfirm": "Reject these changes",
+      "rejectReasonRequired": "Please provide a rejection reason.",
+      "approveSuccess": "Changes approved and applied.",
+      "rejectSuccess": "Changes rejected."
+    },
+    "rejectDialog": {
+      "title": "Reject",
+      "reasonLabel": "Reason (shown to the organizer)",
+      "reasonPlaceholder": "Explain why this is being rejected…",
+      "confirmButton": "Confirm Rejection"
+    }
+  },
+  "superAdmin": {
+    "title": "Super Admin",
+    "adminAccounts": {
+      "title": "Admin Accounts",
+      "empty": "No admin accounts found.",
+      "name": "Name",
+      "phone": "Phone",
+      "isSupport": "Support",
+      "createdAt": "Created",
+      "addAdmin": "Add Admin",
+      "addAdminPhone": "Phone number of the new admin",
+      "addAdminSuccess": "Admin account created.",
+      "removeAdmin": "Remove Admin",
+      "removeAdminConfirm": "Demote this admin back to organizer?",
+      "removeAdminSuccess": "Admin removed.",
+      "toggleSupportGrant": "Grant support permission",
+      "toggleSupportRevoke": "Revoke support permission",
+      "toggleSupportSuccess": "Support permission updated."
+    },
+    "feeSettings": {
+      "title": "Fee Settings",
+      "listingFee": "Event Listing Fee (paise)",
+      "subscriptionFee": "Sponsor Subscription Fee (paise, excl. GST)",
+      "gstRate": "GST Rate (%)",
+      "gstin": "GSTIN",
+      "gstinPlaceholder": "Leave blank until GST-registered",
+      "launchOffer": "Launch Offer Text",
+      "launchOfferPlaceholder": "Optional promotional copy shown to sponsors",
+      "saveSuccess": "Settings saved.",
+      "note": "Changes take effect immediately for new orders. Existing orders are not affected."
+    }
   }
 }
