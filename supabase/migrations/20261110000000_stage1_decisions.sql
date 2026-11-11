@@ -194,6 +194,15 @@ create table if not exists settings (
   updated_at              timestamptz not null default now()
 );
 
+-- If the table was created by an earlier partial run (CREATE TABLE IF NOT EXISTS
+-- skipped it above), ensure all expected columns exist before the seed INSERT.
+alter table settings add column if not exists listing_fee_paise      bigint not null default 10000;
+alter table settings add column if not exists subscription_fee_paise bigint not null default 50000;
+alter table settings add column if not exists gst_rate_pct           numeric(5,2) not null default 18.00;
+alter table settings add column if not exists gstin                  text;
+alter table settings add column if not exists launch_offer_text      text;
+alter table settings add column if not exists updated_at             timestamptz not null default now();
+
 alter table settings enable row level security;
 
 -- Authenticated server code can read fee settings (needed to create Razorpay orders)
