@@ -15,9 +15,17 @@ create extension if not exists pg_net  with schema extensions;
 -- ============================================================
 
 -- BR-13: one super admin; can do everything an admin can, plus manage admin accounts
--- and fee settings. ADD VALUE cannot run inside a transaction in Postgres 12+,
--- but Supabase migrations are run outside an explicit transaction, so this is fine.
-alter type user_role add value 'super_admin';
+-- and fee settings. Wrapped in DO block so re-running the migration (e.g. in the
+-- SQL Editor after a partial run) does not raise "enum label already exists".
+do $$ begin
+  if not exists (
+    select 1 from pg_enum
+    where enumlabel = 'super_admin'
+      and enumtypid = 'user_role'::regtype
+  ) then
+    alter type user_role add value 'super_admin';
+  end if;
+end $$;
 
 -- ============================================================
 -- 2. profiles additions
