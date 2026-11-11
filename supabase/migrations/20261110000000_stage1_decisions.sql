@@ -195,7 +195,10 @@ create table if not exists settings (
 );
 
 -- If the table was created by an earlier partial run (CREATE TABLE IF NOT EXISTS
--- skipped it above), ensure all expected columns exist before the seed INSERT.
+-- skipped it above), ensure the id column is integer (an earlier draft may have
+-- used boolean for the singleton pattern) and that all expected columns exist.
+alter table settings alter column id type integer using id::integer;
+alter table settings alter column id set default 1;
 alter table settings add column if not exists listing_fee_paise      bigint not null default 10000;
 alter table settings add column if not exists subscription_fee_paise bigint not null default 50000;
 alter table settings add column if not exists gst_rate_pct           numeric(5,2) not null default 18.00;
