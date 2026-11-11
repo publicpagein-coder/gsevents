@@ -2,6 +2,9 @@
 -- Stage 1 decisions migration (10 Nov 2026)
 -- Implements all Required Schema Changes from docs/srs-stage1.md.
 -- The base migration (20261109000000_stage1_schema.sql) is NOT edited.
+--
+-- Designed to be fully idempotent: safe to re-run in the SQL Editor
+-- after a partial execution.
 -- ============================================================
 
 -- ---------- Extensions needed for scheduled overdue alerts (FR-ADM-14) ----------
@@ -15,8 +18,8 @@ create extension if not exists pg_net  with schema extensions;
 -- ============================================================
 
 -- BR-13: one super admin; can do everything an admin can, plus manage admin accounts
--- and fee settings. Wrapped in DO block so re-running the migration (e.g. in the
--- SQL Editor after a partial run) does not raise "enum label already exists".
+-- and fee settings. Wrapped in DO block so re-running after a partial execution
+-- does not raise ERROR 42710: enum label already exists.
 do $$ begin
   if not exists (
     select 1 from pg_enum
@@ -34,7 +37,7 @@ end $$;
 -- BR-16: support permission — a super admin can grant any admin the ability to
 -- correct payment errors (refund platform_fees for payment mistakes).
 alter table profiles
-  add column is_support boolean not null default false;
+  add column if not exists is_support boolean not null default false;
 
 -- ============================================================
 -- 3. platform_fees additions (BR-11, BR-12, idempotent webhooks)
@@ -44,23 +47,23 @@ alter table profiles
 -- base_paise / gst_paise: split for receipts (BR-11 and FR-FEE-05)
 -- amount_paise already exists (total charged = base + gst for subscriptions; fixed 10 000 for listings)
 alter table platform_fees
-  add column base_paise          bigint,
-  add column gst_paise           bigint,
-  add column paid_at             timestamptz,
-  add column review_alert_sent_at timestamptz;
+  add column if not exists base_paise           bigint,
+  add column if not exists gst_paise            bigint,
+  add column if not exists paid_at              timestamptz,
+  add column if not exists review_alert_sent_at timestamptz;
 
 -- Idempotent webhooks: a repeated payment.captured event must never insert twice.
-create unique index fees_gateway_order_id_uniq
+create unique index if not exists fees_gateway_order_id_uniq
   on platform_fees (gateway_order_id)
   where gateway_order_id is not null;
 
-create unique index fees_gateway_payment_id_uniq
+create unique index if not exists fees_gateway_payment_id_uniq
   on platform_fees (gateway_payment_id)
   where gateway_payment_id is not null;
 
 -- One paid listing fee per event (BR-10 / FR-FEE-01).
 -- This prevents a second payment row if something goes wrong.
-create unique index fees_one_paid_listing_per_event
+create unique index if not exists fees_one_paid_listing_per_event
   on platform_fees (event_id)
   where fee_type = 'event_listing' and status = 'paid';
 
@@ -71,7 +74,7 @@ create unique index fees_one_paid_listing_per_event
 -- Optional government authority letter. PDF stored in a private bucket.
 -- NULL = no letter uploaded. Admin queue flags events with NULL (FR-ADM-13).
 alter table events
-  add column authority_letter_path text;
+  add column if not exists authority_letter_path text;
 
 -- ============================================================
 -- 5. Updated helper functions
@@ -173,7 +176,7 @@ begin
 end $$;
 
 -- Unique partial index: exactly one super_admin profile (BR-13)
-create unique index profiles_one_super_admin
+create unique index if not exists profiles_one_super_admin
   on profiles (role)
   where role = 'super_admin';
 
@@ -181,7 +184,7 @@ create unique index profiles_one_super_admin
 -- 7. settings table (FR-ADM-10, FR-FEE-06)
 -- ============================================================
 
-create table settings (
+create table if not exists settings (
   id                      int primary key default 1 check (id = 1),  -- singleton row
   listing_fee_paise       bigint not null default 10000,
   subscription_fee_paise  bigint not null default 50000,
@@ -194,10 +197,12 @@ create table settings (
 alter table settings enable row level security;
 
 -- Authenticated server code can read fee settings (needed to create Razorpay orders)
+drop policy if exists settings_read on settings;
 create policy settings_read on settings
   for select using (auth.uid() is not null);
 
 -- Only the super admin can write fee settings
+drop policy if exists settings_write on settings;
 create policy settings_write on settings
   for all using (is_super_admin()) with check (is_super_admin());
 
@@ -205,13 +210,14 @@ create policy settings_write on settings
 -- GST is included in the organizer's ₹100 (10 000 paise).
 -- Sponsor subscription base is ₹500; GST is added on top, billed as ₹590.
 insert into settings (id, listing_fee_paise, subscription_fee_paise, gst_rate_pct)
-values (1, 10000, 50000, 18.00);
+values (1, 10000, 50000, 18.00)
+on conflict do nothing;
 
 -- ============================================================
 -- 8. event_change_requests table (BR-15, FR-ADM-12, FR-EVT-10)
 -- ============================================================
 
-create table event_change_requests (
+create table if not exists event_change_requests (
   id                       uuid primary key default gen_random_uuid(),
   event_id                 uuid not null references events(id) on delete cascade,
   proposed_fields          jsonb not null,   -- snapshot of proposed event-level changes
@@ -227,18 +233,20 @@ create table event_change_requests (
 );
 
 -- Only one open change request per event at a time (BR-15)
-create unique index event_change_requests_one_pending
+create unique index if not exists event_change_requests_one_pending
   on event_change_requests (event_id)
   where status = 'pending';
 
 alter table event_change_requests enable row level security;
 
 -- The event's organizer can see and create change requests for their own events
+drop policy if exists ecr_organizer_select on event_change_requests;
 create policy ecr_organizer_select on event_change_requests
   for select using (
     exists (select 1 from events e where e.id = event_id and e.organizer_id = auth.uid())
   );
 
+drop policy if exists ecr_organizer_insert on event_change_requests;
 create policy ecr_organizer_insert on event_change_requests
   for insert with check (
     exists (select 1 from events e where e.id = event_id and e.organizer_id = auth.uid())
@@ -246,9 +254,11 @@ create policy ecr_organizer_insert on event_change_requests
   );
 
 -- Admins and super admins can read all change requests and update (approve/reject) them
+drop policy if exists ecr_admin_select on event_change_requests;
 create policy ecr_admin_select on event_change_requests
   for select using (is_admin());
 
+drop policy if exists ecr_admin_update on event_change_requests;
 create policy ecr_admin_update on event_change_requests
   for update using (is_admin()) with check (is_admin());
 
@@ -258,7 +268,7 @@ create policy ecr_admin_update on event_change_requests
 
 -- events_update: organizers can no longer update a published event directly (BR-15).
 -- They must submit an event_change_request instead.
-drop policy events_update on events;
+drop policy if exists events_update on events;
 
 create policy events_update on events
   for update
@@ -270,7 +280,7 @@ create policy events_update on events
   );
 
 -- interests_insert: sponsor must have an active subscription (FR-FEE-02 updated)
-drop policy interests_insert on interests;
+drop policy if exists interests_insert on interests;
 
 create policy interests_insert on interests
   for insert with check (
@@ -288,7 +298,7 @@ create policy interests_insert on interests
 
 -- messages_insert: sender must be a sponsor with an active subscription OR the organizer
 -- (organizers do not need a subscription to reply in their own threads)
-drop policy messages_insert on messages;
+drop policy if exists messages_insert on messages;
 
 create policy messages_insert on messages
   for insert with check (
