@@ -19,7 +19,12 @@
     "viewAll": "બધું જુઓ",
     "learnMore": "વધુ જાણો",
     "required": "જરૂરી",
-    "optional": "વૈકલ્પિક"
+    "optional": "વૈકલ્પિક",
+    "approve": "મંજૂર કરો",
+    "reject": "નામંજૂર કરો",
+    "reason": "કારણ",
+    "noResults": "કોઈ આઇટમ મળ્યું નહીં",
+    "actions": "ક્રિયાઓ"
   },
   "nav": {
     "home": "હોમ",
@@ -50,5 +55,137 @@
     "roleOrganizer": "ઇવેન્ટ આયોજક",
     "roleSponsor": "સ્પોન્સર",
     "chooseRole": "હું ઇચ્છું છું…"
+  },
+  "org": {
+    "profileComplete": {
+      "title": "આયોજક પ્રોફાઇલ પૂર્ણ કરો",
+      "subtitle": "તમારા સંગઠન વિશે જણાવો જેથી અમે તમને ચકાસી શકીએ.",
+      "orgName": "સંગઠનનું નામ",
+      "orgNamePlaceholder": "દા.ત. અમદાવાદ સાંસ્કૃતિક સમાજ",
+      "orgType": "સંગઠનનો પ્રકાર",
+      "orgTypePlaceholder": "પ્રકાર પસંદ કરો",
+      "orgTypeSociety": "સોસાયટી",
+      "orgTypeClub": "ક્લબ",
+      "orgTypeCompany": "કંપની",
+      "orgTypeOther": "અન્ય",
+      "venueName": "મુખ્ય સ્થળ / વિસ્તાર",
+      "venueNamePlaceholder": "દા.ત. GMDC ગ્રાઉન્ડ, અમદાવાદ",
+      "socialLink": "સોશ્યલ મીડિયા પેજ",
+      "socialLinkPlaceholder": "https://instagram.com/your-page (વૈકલ્પિક)",
+      "proofNote": "પ્રૂફ નોટ",
+      "proofNotePlaceholder": "દા.ત. XYZ સોસાયટી તરીકે નોંધાયેલ, નં. ABC123 (વૈકલ્પિક)",
+      "submitButton": "સમીક્ષા માટે સબમિટ કરો",
+      "successTitle": "પ્રોફાઇલ સબમિટ!",
+      "successMessage": "તમારી પ્રોફાઇલ સમીક્ષા હેઠળ છે. અમે ટૂંક સમયમાં સંપર્ક કરીશું."
+    },
+    "pending": {
+      "title": "અરજી સમીક્ષા હેઠળ",
+      "message": "તમારી આયોજક પ્રોફાઇલ સબમિટ થઈ ગઈ છે અને એડમિનની મંજૂરીની રાહ છે. મંજૂરી મળ્યા બાદ ડૅશબૉર્ડ ઍક્સેસ કરી શકશો.",
+      "contactSupport": "પ્રશ્નો હોય તો સપોર્ટ સાથે સંપર્ક કરો."
+    },
+    "rejected": {
+      "title": "અરજી મંજૂર નહીં",
+      "message": "દુઃખની વાત છે, તમારી આયોજક અરજી મંજૂર ન થઈ.",
+      "reasonLabel": "આપેલ કારણ:",
+      "noReason": "કોઈ કારણ આપ્યું નથી.",
+      "contactSupport": "સપોર્ટ સાથે સંપર્ક કરો, ભૂલ સુધારો અને ફરી સબમિટ કરો.",
+      "updateProfile": "પ્રોફાઇલ અપડેટ કરો"
+    }
+  },
+  "admin": {
+    "title": "એડમિન પૅનલ",
+    "queues": {
+      "organizers": "આયોજક કતાર",
+      "events": "ઇવેન્ટ કતાર",
+      "changes": "ફેરફાર વિનંતીઓ"
+    },
+    "pending": "બાકી",
+    "organizerQueue": {
+      "title": "બાકી આયોજક ચકાસણી",
+      "empty": "ચકાસણી માટે કોઈ આયોજક નહીં.",
+      "orgName": "સંગઠન",
+      "orgType": "પ્રકાર",
+      "venueName": "સ્થળ",
+      "socialLink": "સોશ્યલ લિંક",
+      "proofNote": "પ્રૂફ નોટ",
+      "phone": "ફોન",
+      "submittedAt": "સબમિટ તારીખ",
+      "approveConfirm": "આ આયોજકને મંજૂર કરો?",
+      "rejectConfirm": "આ આયોજકને નામંજૂર કરો",
+      "rejectReasonRequired": "કૃપા કરી નામંજૂરનું કારણ આપો.",
+      "approveSuccess": "આયોજક મંજૂર.",
+      "rejectSuccess": "આયોજક નામંજૂર."
+    },
+    "eventQueue": {
+      "title": "બાકી ઇવેન્ટ સમીક્ષાઓ",
+      "empty": "સમીક્ષા માટે કોઈ ઇવેન્ટ નહીં.",
+      "eventName": "ઇવેન્ટ",
+      "organizer": "આયોજક",
+      "dates": "તારીખો",
+      "city": "શહેર",
+      "paidAt": "ચૂકવ્યું",
+      "timeInQueue": "કતારમાં",
+      "overdueLabel": "સમય પૂર્ણ",
+      "noLetter": "પત્ર નહીં",
+      "approveConfirm": "આ ઇવેન્ટ પ્રકાશિત કરો?",
+      "rejectConfirm": "આ ઇવેન્ટ નામંજૂર કરો",
+      "rejectReasonRequired": "કૃપા કરી નામંજૂરનું કારણ આપો.",
+      "approveSuccess": "ઇવેન્ટ પ્રકાશિત.",
+      "rejectSuccess": "ઇવેન્ટ નામંજૂર."
+    },
+    "changeQueue": {
+      "title": "બાકી ફેરફાર વિનંતીઓ",
+      "empty": "સમીક્ષા માટે કોઈ ફેરફાર વિનંતી નહીં.",
+      "eventName": "ઇવેન્ટ",
+      "submittedAt": "સબમિટ તારીખ",
+      "proposedChanges": "પ્રસ્તાવિત ફેરફારો",
+      "currentValue": "વર્તમાન",
+      "proposedValue": "પ્રસ્તાવિત",
+      "newLetter": "નવો અધિકૃતતા પત્ર",
+      "viewLetter": "પત્ર જુઓ",
+      "approveConfirm": "આ ફેરફારો ઇવેન્ટ પર લાગુ કરો?",
+      "rejectConfirm": "આ ફેરફારો નામંજૂર કરો",
+      "rejectReasonRequired": "કૃપા કરી નામંજૂરનું કારણ આપો.",
+      "approveSuccess": "ફેરફારો મંજૂર અને લાગુ.",
+      "rejectSuccess": "ફેરફારો નામંજૂર."
+    },
+    "rejectDialog": {
+      "title": "નામંજૂર",
+      "reasonLabel": "કારણ (આયોજકને બતાવાશે)",
+      "reasonPlaceholder": "સમજાવો કે આ શા માટે નામંજૂર થઈ રહ્યું છે…",
+      "confirmButton": "નામંજૂરી નિশ્ચિત કરો"
+    }
+  },
+  "superAdmin": {
+    "title": "સુપર એડમિન",
+    "adminAccounts": {
+      "title": "એડમિન ખાતા",
+      "empty": "કોઈ એડમિન ખાતું મળ્યું નહીં.",
+      "name": "નામ",
+      "phone": "ફોન",
+      "isSupport": "સપોર્ટ",
+      "createdAt": "બનાવ્યું",
+      "addAdmin": "એડમિન ઉમેરો",
+      "addAdminPhone": "નવા એડમિનનો ફોન નંબર",
+      "addAdminSuccess": "એડમિન ખાતું બનાવ્યું.",
+      "removeAdmin": "એડમિન હટાવો",
+      "removeAdminConfirm": "આ એડમિનને પાછા આયોજક બનાવો?",
+      "removeAdminSuccess": "એડમિન હટાવ્યો.",
+      "toggleSupportGrant": "સપોર્ટ પરવાનગી આપો",
+      "toggleSupportRevoke": "સપોર્ટ પરવાનગી રદ કરો",
+      "toggleSupportSuccess": "સપોર્ટ પરવાનગી અપડેટ."
+    },
+    "feeSettings": {
+      "title": "ફી સેટિંગ્સ",
+      "listingFee": "ઇવેન્ટ લિસ્ટિંગ ફી (પૈસા)",
+      "subscriptionFee": "સ્પોન્સર સબ્સ્ક્રિપ્શન ફી (પૈસા, GST વગર)",
+      "gstRate": "GST દર (%)",
+      "gstin": "GSTIN",
+      "gstinPlaceholder": "GST નોંધણી સુધી ખાલી રાખો",
+      "launchOffer": "લૉન્ચ ઑફર ટેક્સ્ટ",
+      "launchOfferPlaceholder": "સ્પોન્સર્સ માટે વૈકલ્પિક પ્રમોશનલ સંદેશ",
+      "saveSuccess": "સેટિંગ્સ સાચવ્યા.",
+      "note": "ફેરફારો નવા ઓર્ડર પર તરત લાગુ. હાલના ઓર્ડર પ્રભાવિત નહીં."
+    }
   }
 }

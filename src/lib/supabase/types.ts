@@ -1,8 +1,8 @@
 /**
- * Supabase generated types.
+ * Supabase generated types — updated after 20261110000000_stage1_decisions.sql.
  *
  * Run `supabase gen types typescript --local > src/lib/supabase/types.ts`
- * after `supabase start` to replace this stub with the real types.
+ * after `supabase start` to regenerate from the live schema.
  */
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
@@ -52,31 +52,34 @@ export type Database = {
       profiles: {
         Row: {
           id: string;
-          role: "organizer" | "sponsor" | "general" | "admin";
+          role: "organizer" | "sponsor" | "general" | "admin" | "super_admin";
           full_name: string | null;
           phone: string | null;
           city_id: number | null;
           preferred_language: "en" | "hi" | "gu";
+          is_support: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id: string;
-          role?: "organizer" | "sponsor" | "general" | "admin";
+          role?: "organizer" | "sponsor" | "general" | "admin" | "super_admin";
           full_name?: string | null;
           phone?: string | null;
           city_id?: number | null;
           preferred_language?: "en" | "hi" | "gu";
+          is_support?: boolean;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          role?: "organizer" | "sponsor" | "general" | "admin";
+          role?: "organizer" | "sponsor" | "general" | "admin" | "super_admin";
           full_name?: string | null;
           phone?: string | null;
           city_id?: number | null;
           preferred_language?: "en" | "hi" | "gu";
+          is_support?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -184,6 +187,7 @@ export type Database = {
           ticketing: "none" | "ticketed";
           status: "draft" | "pending_review" | "published" | "rejected" | "cancelled" | "completed";
           rejection_reason: string | null;
+          authority_letter_path: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -204,6 +208,7 @@ export type Database = {
           ticketing?: "none" | "ticketed";
           status?: "draft" | "pending_review" | "published" | "rejected" | "cancelled" | "completed";
           rejection_reason?: string | null;
+          authority_letter_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -224,6 +229,7 @@ export type Database = {
           ticketing?: "none" | "ticketed";
           status?: "draft" | "pending_review" | "published" | "rejected" | "cancelled" | "completed";
           rejection_reason?: string | null;
+          authority_letter_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -326,10 +332,14 @@ export type Database = {
           event_id: string | null;
           fee_type: "event_listing" | "sponsor_subscription";
           amount_paise: number;
+          base_paise: number | null;
+          gst_paise: number | null;
           status: "pending" | "paid" | "failed" | "refunded";
           gateway_order_id: string | null;
           gateway_payment_id: string | null;
           refund_reason: string | null;
+          paid_at: string | null;
+          review_alert_sent_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -339,10 +349,14 @@ export type Database = {
           event_id?: string | null;
           fee_type: "event_listing" | "sponsor_subscription";
           amount_paise: number;
+          base_paise?: number | null;
+          gst_paise?: number | null;
           status?: "pending" | "paid" | "failed" | "refunded";
           gateway_order_id?: string | null;
           gateway_payment_id?: string | null;
           refund_reason?: string | null;
+          paid_at?: string | null;
+          review_alert_sent_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -352,10 +366,14 @@ export type Database = {
           event_id?: string | null;
           fee_type?: "event_listing" | "sponsor_subscription";
           amount_paise?: number;
+          base_paise?: number | null;
+          gst_paise?: number | null;
           status?: "pending" | "paid" | "failed" | "refunded";
           gateway_order_id?: string | null;
           gateway_payment_id?: string | null;
           refund_reason?: string | null;
+          paid_at?: string | null;
+          review_alert_sent_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -391,20 +409,96 @@ export type Database = {
         };
         Relationships: [];
       };
+      settings: {
+        Row: {
+          id: number;
+          listing_fee_paise: number;
+          subscription_fee_paise: number;
+          gst_rate_pct: number;
+          gstin: string | null;
+          launch_offer_text: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          listing_fee_paise?: number;
+          subscription_fee_paise?: number;
+          gst_rate_pct?: number;
+          gstin?: string | null;
+          launch_offer_text?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          listing_fee_paise?: number;
+          subscription_fee_paise?: number;
+          gst_rate_pct?: number;
+          gstin?: string | null;
+          launch_offer_text?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      event_change_requests: {
+        Row: {
+          id: string;
+          event_id: string;
+          proposed_fields: Json;
+          proposed_packages: Json | null;
+          new_authority_letter_path: string | null;
+          status: "pending" | "approved" | "rejected";
+          rejection_reason: string | null;
+          submitted_at: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          review_alert_sent_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          proposed_fields: Json;
+          proposed_packages?: Json | null;
+          new_authority_letter_path?: string | null;
+          status?: "pending" | "approved" | "rejected";
+          rejection_reason?: string | null;
+          submitted_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          review_alert_sent_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          proposed_fields?: Json;
+          proposed_packages?: Json | null;
+          new_authority_letter_path?: string | null;
+          status?: "pending" | "approved" | "rejected";
+          rejection_reason?: string | null;
+          submitted_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          review_alert_sent_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
       my_role: {
         Args: Record<PropertyKey, never>;
-        Returns: "organizer" | "sponsor" | "general" | "admin";
+        Returns: "organizer" | "sponsor" | "general" | "admin" | "super_admin";
       };
       is_admin: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      is_super_admin: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
     };
     Enums: {
-      user_role: "organizer" | "sponsor" | "general" | "admin";
+      user_role: "organizer" | "sponsor" | "general" | "admin" | "super_admin";
       verification_status: "pending" | "approved" | "rejected";
       organizer_type: "society" | "club" | "company" | "other";
       sponsor_plan: "basic" | "premium";
