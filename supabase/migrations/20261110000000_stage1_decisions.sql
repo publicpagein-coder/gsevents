@@ -184,46 +184,37 @@ create unique index if not exists profiles_one_super_admin
 -- 7. settings table (FR-ADM-10, FR-FEE-06)
 -- ============================================================
 
-create table if not exists settings (
-  id                      int primary key default 1 check (id = 1),  -- singleton row
-  listing_fee_paise       bigint not null default 10000,
-  subscription_fee_paise  bigint not null default 50000,
-  gst_rate_pct            numeric(5,2) not null default 18.00,
-  gstin                   text,          -- null until the platform is GST-registered
-  launch_offer_text       text,          -- first-year offer copy, null = no active offer
-  updated_at              timestamptz not null default now()
-);
+-- Drop any partially-created settings table from failed earlier runs.
+-- This table has never held real data; dropping and recreating is safe.
+drop table if exists settings cascade;
 
--- If the table was created by an earlier partial run (CREATE TABLE IF NOT EXISTS
--- skipped it above), ensure the id column is integer (an earlier draft may have
--- used boolean for the singleton pattern) and that all expected columns exist.
-alter table settings alter column id type integer using id::integer;
-alter table settings alter column id set default 1;
-alter table settings add column if not exists listing_fee_paise      bigint not null default 10000;
-alter table settings add column if not exists subscription_fee_paise bigint not null default 50000;
-alter table settings add column if not exists gst_rate_pct           numeric(5,2) not null default 18.00;
-alter table settings add column if not exists gstin                  text;
-alter table settings add column if not exists launch_offer_text      text;
-alter table settings add column if not exists updated_at             timestamptz not null default now();
+create table settings (
+  id                     integer primary key default 1,
+  listing_fee_paise      bigint not null default 10000,
+  subscription_fee_paise bigint not null default 50000,
+  gst_rate_pct           numeric(5,2) not null default 18.00,
+  gstin                  text,
+  launch_offer_text      text,
+  updated_at             timestamptz not null default now(),
+  constraint settings_single_row check (id = 1)
+);
 
 alter table settings enable row level security;
 
--- Authenticated server code can read fee settings (needed to create Razorpay orders)
-drop policy if exists settings_read on settings;
-create policy settings_read on settings
-  for select using (auth.uid() is not null);
+-- Authenticated users can read fee settings (needed to create Razorpay orders)
+create policy "settings_select" on settings
+  for select to authenticated using (true);
 
 -- Only the super admin can write fee settings
-drop policy if exists settings_write on settings;
-create policy settings_write on settings
-  for all using (is_super_admin()) with check (is_super_admin());
+create policy "settings_all_superadmin" on settings
+  for all using (is_super_admin());
 
 -- Seed the single settings row with confirmed Stage 1 values.
 -- GST is included in the organizer's ₹100 (10 000 paise).
 -- Sponsor subscription base is ₹500; GST is added on top, billed as ₹590.
 insert into settings (id, listing_fee_paise, subscription_fee_paise, gst_rate_pct)
 values (1, 10000, 50000, 18.00)
-on conflict do nothing;
+on conflict (id) do nothing;
 
 -- ============================================================
 -- 8. event_change_requests table (BR-15, FR-ADM-12, FR-EVT-10)
