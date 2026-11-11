@@ -58,6 +58,16 @@ export type Database = {
           city_id: number | null;
           preferred_language: "en" | "hi" | "gu";
           is_support: boolean;
+          /** Organizer fields (unified from organizer_profiles). Null for non-organizers. */
+          org_name: string | null;
+          org_type: "society" | "club" | "company" | "other" | null;
+          venue_name: string | null;
+          social_link: string | null;
+          proof_note: string | null;
+          verification_status: "pending" | "approved" | "rejected" | null;
+          verified_at: string | null;
+          verified_by: string | null;
+          rejection_reason: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -69,6 +79,15 @@ export type Database = {
           city_id?: number | null;
           preferred_language?: "en" | "hi" | "gu";
           is_support?: boolean;
+          org_name?: string | null;
+          org_type?: "society" | "club" | "company" | "other" | null;
+          venue_name?: string | null;
+          social_link?: string | null;
+          proof_note?: string | null;
+          verification_status?: "pending" | "approved" | "rejected" | null;
+          verified_at?: string | null;
+          verified_by?: string | null;
+          rejection_reason?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -80,11 +99,24 @@ export type Database = {
           city_id?: number | null;
           preferred_language?: "en" | "hi" | "gu";
           is_support?: boolean;
+          org_name?: string | null;
+          org_type?: "society" | "club" | "company" | "other" | null;
+          venue_name?: string | null;
+          social_link?: string | null;
+          proof_note?: string | null;
+          verification_status?: "pending" | "approved" | "rejected" | null;
+          verified_at?: string | null;
+          verified_by?: string | null;
+          rejection_reason?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Relationships: [];
       };
+      /**
+       * @deprecated Organizer fields live on profiles. Table kept empty.
+       * Do not use in new code.
+       */
       organizer_profiles: {
         Row: {
           user_id: string;
@@ -482,7 +514,20 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      organizer_directory: {
+        Row: {
+          user_id: string;
+          org_name: string | null;
+          org_type: "society" | "club" | "company" | "other" | null;
+          venue_name: string | null;
+          social_link: string | null;
+          proof_note: string | null;
+          verification_status: "pending" | "approved" | "rejected" | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       my_role: {
         Args: Record<PropertyKey, never>;

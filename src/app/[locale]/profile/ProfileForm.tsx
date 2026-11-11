@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateProfile, signOut, signOutAll } from "@/app/actions/auth";
+import { saveOrganizerProfile } from "@/app/actions/organizer";
 
 interface City {
   id: number;
@@ -31,6 +33,12 @@ interface ProfileFormProps {
   role: string;
   cities: City[];
   locale: string;
+  orgName: string | null;
+  orgType: string | null;
+  venueName: string | null;
+  socialLink: string | null;
+  proofNote: string | null;
+  verificationStatus: string | null;
 }
 
 const LANGUAGE_OPTIONS: { value: "en" | "hi" | "gu"; label: string }[] = [
@@ -39,15 +47,7 @@ const LANGUAGE_OPTIONS: { value: "en" | "hi" | "gu"; label: string }[] = [
   { value: "gu", label: "ગુજરાતી" },
 ];
 
-const ROLE_LABELS: Record<string, string> = {
-  organizer: "Event Organizer",
-  sponsor: "Sponsor",
-  admin: "Admin",
-  super_admin: "Super Admin",
-  general: "General",
-};
-
-/** FR-AUTH-03 — Profile edit form (client component). */
+/** FR-AUTH-03 / FR-ORG-01 — Unified profile form (client component). */
 export function ProfileForm({
   fullName,
   phone,
@@ -56,38 +56,72 @@ export function ProfileForm({
   role,
   cities,
   locale,
+  orgName,
+  orgType,
+  venueName,
+  socialLink,
+  proofNote,
+  verificationStatus,
 }: ProfileFormProps) {
   const t = useTranslations("profile");
+  const tOrg = useTranslations("org.profileComplete");
   const tCommon = useTranslations("common");
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
-  // Controlled fields
+  // Personal fields
   const [name, setName] = useState(fullName ?? "");
-  const [selectedCityId, setSelectedCityId] = useState<string>(cityId ? String(cityId) : "none");
-  const [selectedLanguage, setSelectedLanguage] = useState<"en" | "hi" | "gu">(preferredLanguage);
+  const [selectedCityId, setSelectedCityId] = useState<string>(
+    cityId ? String(cityId) : "none",
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState<"en" | "hi" | "gu">(
+    preferredLanguage,
+  );
+
+  // Organizer fields
+  const [selectedOrgType, setSelectedOrgType] = useState(orgType ?? "");
+  const isOrganizer = role === "organizer";
+  const orgLocked = verificationStatus === "approved";
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+    setFieldErrors({});
 
+    const formEl = e.currentTarget;
     const formData = new FormData();
     if (name.trim()) formData.set("full_name", name.trim());
     formData.set("city_id", selectedCityId === "none" ? "" : selectedCityId);
     formData.set("preferred_language", selectedLanguage);
 
+    const orgForm = isOrganizer && !orgLocked ? new FormData(formEl) : null;
+    if (orgForm) orgForm.set("org_type", selectedOrgType);
+
     startTransition(async () => {
-      const result = await updateProfile(formData);
-      if (!result.success) {
-        setError(result.error);
+      const personalResult = await updateProfile(formData);
+      if (!personalResult.success) {
+        setError(personalResult.error);
         return;
       }
 
-      // If language changed, navigate to the same page under the new locale.
+      if (orgForm) {
+        const orgResult = await saveOrganizerProfile(orgForm);
+        if (!orgResult.success) {
+          setError(orgResult.error);
+          if (orgResult.fieldErrors) setFieldErrors(orgResult.fieldErrors);
+          return;
+        }
+        setSuccess(tOrg("successMessage"));
+        router.push(`/${locale}/pending`);
+        router.refresh();
+        return;
+      }
+
       if (selectedLanguage !== locale) {
         setSuccess(t("languageChanged"));
         setTimeout(() => {
@@ -119,9 +153,23 @@ export function ProfileForm({
     });
   }
 
+  function roleLabel(value: string): string {
+    switch (value) {
+      case "organizer":
+        return t("roleOrganizer");
+      case "sponsor":
+        return t("roleSponsor");
+      case "admin":
+        return t("roleAdmin");
+      case "super_admin":
+        return t("roleSuperAdmin");
+      default:
+        return t("roleGeneral");
+    }
+  }
+
   return (
     <div className="space-y-6">
-      {/* Profile fields */}
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -137,7 +185,6 @@ export function ProfileForm({
               </Alert>
             )}
 
-            {/* Full name */}
             <div className="space-y-1.5">
               <Label htmlFor="full_name">{t("fullName")}</Label>
               <Input
@@ -151,14 +198,12 @@ export function ProfileForm({
               />
             </div>
 
-            {/* Phone — display only */}
             <div className="space-y-1.5">
               <Label>{t("phone")}</Label>
               <Input value={phone} readOnly disabled className="bg-muted" />
               <p className="text-xs text-muted-foreground">{t("phoneReadOnly")}</p>
             </div>
 
-            {/* City */}
             <div className="space-y-1.5">
               <Label htmlFor="city_id">{t("city")}</Label>
               <Select
@@ -180,7 +225,6 @@ export function ProfileForm({
               </Select>
             </div>
 
-            {/* Preferred language */}
             <div className="space-y-1.5">
               <Label htmlFor="preferred_language">{t("language")}</Label>
               <Select
@@ -201,26 +245,153 @@ export function ProfileForm({
               </Select>
             </div>
 
-            {/* Role — read-only display */}
             <div className="space-y-1.5">
               <Label>{t("role")}</Label>
               <Input
-                value={ROLE_LABELS[role] ?? role}
+                value={roleLabel(role)}
                 readOnly
                 disabled
-                className="bg-muted capitalize"
+                className="bg-muted"
               />
               <p className="text-xs text-muted-foreground">{t("roleReadOnly")}</p>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? tCommon("loading") : tCommon("save")}
+            {isOrganizer && (
+              <div className="space-y-5 border-t pt-5">
+                <div>
+                  <h2 className="text-base font-semibold">{t("organizerSection")}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {t("organizerSectionSubtitle")}
+                  </p>
+                </div>
+
+                {orgLocked && (
+                  <Alert>
+                    <AlertDescription>{t("organizerApprovedLocked")}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="org_name">
+                    {tOrg("orgName")} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="org_name"
+                    name="org_name"
+                    placeholder={tOrg("orgNamePlaceholder")}
+                    defaultValue={orgName ?? ""}
+                    required={!orgLocked}
+                    disabled={isPending || orgLocked}
+                  />
+                  {fieldErrors["org_name"]?.map((msg) => (
+                    <p key={msg} className="text-xs text-destructive">
+                      {msg}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="org_type">
+                    {tOrg("orgType")} <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={selectedOrgType}
+                    onValueChange={setSelectedOrgType}
+                    disabled={isPending || orgLocked}
+                    required={!orgLocked}
+                  >
+                    <SelectTrigger id="org_type">
+                      <SelectValue placeholder={tOrg("orgTypePlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="society">{tOrg("orgTypeSociety")}</SelectItem>
+                      <SelectItem value="club">{tOrg("orgTypeClub")}</SelectItem>
+                      <SelectItem value="company">{tOrg("orgTypeCompany")}</SelectItem>
+                      <SelectItem value="other">{tOrg("orgTypeOther")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldErrors["org_type"]?.map((msg) => (
+                    <p key={msg} className="text-xs text-destructive">
+                      {msg}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="venue_name">
+                    {tOrg("venueName")} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="venue_name"
+                    name="venue_name"
+                    placeholder={tOrg("venueNamePlaceholder")}
+                    defaultValue={venueName ?? ""}
+                    required={!orgLocked}
+                    disabled={isPending || orgLocked}
+                  />
+                  {fieldErrors["venue_name"]?.map((msg) => (
+                    <p key={msg} className="text-xs text-destructive">
+                      {msg}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="social_link">
+                    {tOrg("socialLink")}{" "}
+                    <span className="text-muted-foreground text-xs">
+                      ({tCommon("optional")})
+                    </span>
+                  </Label>
+                  <Input
+                    id="social_link"
+                    name="social_link"
+                    type="url"
+                    placeholder={tOrg("socialLinkPlaceholder")}
+                    defaultValue={socialLink ?? ""}
+                    disabled={isPending || orgLocked}
+                  />
+                  {fieldErrors["social_link"]?.map((msg) => (
+                    <p key={msg} className="text-xs text-destructive">
+                      {msg}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="proof_note">
+                    {tOrg("proofNote")}{" "}
+                    <span className="text-muted-foreground text-xs">
+                      ({tCommon("optional")})
+                    </span>
+                  </Label>
+                  <Textarea
+                    id="proof_note"
+                    name="proof_note"
+                    placeholder={tOrg("proofNotePlaceholder")}
+                    defaultValue={proofNote ?? ""}
+                    rows={3}
+                    disabled={isPending || orgLocked}
+                  />
+                </div>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isPending || (isOrganizer && !orgLocked && !selectedOrgType)}
+            >
+              {isPending
+                ? tCommon("loading")
+                : isOrganizer && !orgLocked
+                  ? tOrg("submitButton")
+                  : tCommon("save")}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Sign out section — FR-AUTH-04 */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("signOutSection")}</CardTitle>

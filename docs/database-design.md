@@ -1,6 +1,6 @@
 # Database Design
 
-Schema source: `supabase/migrations/20261109000000_stage1_schema.sql`
+Schema source: `supabase/migrations/` (base `20261109000000_stage1_schema.sql`, plus later migrations including unify-organizer-into-profiles).
 
 ## Enums
 
@@ -45,34 +45,33 @@ Seed data: navratri-garba, diwali-fair, uttarayan, ganesh-utsav, wedding-expo, c
 
 ### `profiles`
 
-| Column               | Type                                   | Notes                                         |
-| -------------------- | -------------------------------------- | --------------------------------------------- |
-| `id`                 | `uuid` PK                              | References `auth.users(id)` ON DELETE CASCADE |
-| `role`               | `user_role` NOT NULL DEFAULT `general` | Guard trigger prevents self-change            |
-| `full_name`          | `text`                                 |                                               |
-| `phone`              | `text`                                 |                                               |
-| `city_id`            | `int`                                  | FK → `cities(id)`                             |
-| `preferred_language` | `text` NOT NULL DEFAULT `en`           | CHECK IN ('en','hi','gu')                     |
-| `created_at`         | `timestamptz` NOT NULL DEFAULT now()   |                                               |
-| `updated_at`         | `timestamptz` NOT NULL DEFAULT now()   | Auto-updated by trigger                       |
+| Column                      | Type                                   | Notes                                                                 |
+| --------------------------- | -------------------------------------- | --------------------------------------------------------------------- |
+| `id`                        | `uuid` PK                              | References `auth.users(id)` ON DELETE CASCADE                         |
+| `role`                      | `user_role` NOT NULL DEFAULT `general` | Guard trigger prevents self-change                                    |
+| `full_name`                 | `text`                                 |                                                                       |
+| `phone`                     | `text`                                 |                                                                       |
+| `city_id`                   | `int`                                  | FK → `cities(id)`                                                     |
+| `preferred_language`        | `text` NOT NULL DEFAULT `en`           | CHECK IN ('en','hi','gu')                                             |
+| `is_support`                | `boolean` NOT NULL DEFAULT false       | Support permission (super admin only)                                 |
+| `org_name`                  | `text`                                 | Organizer org name (FR-ORG-01). Null until submitted / non-organizers |
+| `org_type`                  | `organizer_type`                       | Nullable; set when organizer submits                                  |
+| `venue_name`                | `text`                                 |                                                                       |
+| `social_link`               | `text`                                 |                                                                       |
+| `proof_note`                | `text`                                 | Link or note for a past event photo                                   |
+| `verification_status`       | `verification_status`                  | Null until org fields submitted; then pending/approved/rejected       |
+| `verified_at`               | `timestamptz`                          | Set by admin on approval                                              |
+| `verified_by`               | `uuid`                                 | FK → `profiles(id)`                                                   |
+| `rejection_reason`          | `text`                                 |                                                                       |
+| `created_at` / `updated_at` | `timestamptz`                          | Auto-updated by trigger                                               |
 
 Row created automatically by `handle_new_user` trigger on `auth.users` insert. Role comes from `raw_user_meta_data->>'role'`; `admin` cannot be self-assigned.
 
-### `organizer_profiles`
+Organizer fields were unified into `profiles` (migration `20261111000000_unify_organizer_into_profiles.sql`). Incomplete organizer = missing required `org_name` / `org_type` / `venue_name`. Public-safe approved org fields are exposed via the `organizer_directory` view (no phone).
 
-| Column                      | Type                                             | Notes                                 |
-| --------------------------- | ------------------------------------------------ | ------------------------------------- |
-| `user_id`                   | `uuid` PK                                        | FK → `profiles(id)` ON DELETE CASCADE |
-| `org_name`                  | `text` NOT NULL                                  |                                       |
-| `org_type`                  | `organizer_type` NOT NULL DEFAULT `society`      |                                       |
-| `venue_name`                | `text`                                           |                                       |
-| `social_link`               | `text`                                           |                                       |
-| `proof_note`                | `text`                                           | Link or note for a past event photo   |
-| `verification_status`       | `verification_status` NOT NULL DEFAULT `pending` | Guard trigger; only admin can change  |
-| `verified_at`               | `timestamptz`                                    | Set by admin on approval              |
-| `verified_by`               | `uuid`                                           | FK → `profiles(id)`                   |
-| `rejection_reason`          | `text`                                           |                                       |
-| `created_at` / `updated_at` | `timestamptz`                                    |                                       |
+### `organizer_profiles` (DEPRECATED)
+
+Kept empty after the unify migration. Do **not** write new rows. All app code reads/writes organizer fields on `profiles`. Table is retained (not dropped) only to avoid risky schema churn; insert/update RLS policies were removed.
 
 ### `sponsor_profiles`
 
@@ -93,7 +92,7 @@ Row created automatically by `handle_new_user` trigger on `auth.users` insert. R
 | Column                      | Type                                         | Notes                                                |
 | --------------------------- | -------------------------------------------- | ---------------------------------------------------- |
 | `id`                        | `uuid` PK DEFAULT gen_random_uuid()          |                                                      |
-| `organizer_id`              | `uuid` NOT NULL                              | FK → `organizer_profiles(user_id)` ON DELETE CASCADE |
+| `organizer_id`              | `uuid` NOT NULL                              | FK → `profiles(id)` ON DELETE CASCADE                |
 | `title`                     | `text` NOT NULL                              |                                                      |
 | `description`               | `text`                                       |                                                      |
 | `event_type_id`             | `int` NOT NULL                               | FK → `event_types(id)`                               |
@@ -183,9 +182,8 @@ UNIQUE INDEX on `(sponsor_id, event_id, coalesce(package_id, '00000000-...'::uui
 | From                   | To                     | Via                               |
 | ---------------------- | ---------------------- | --------------------------------- |
 | `profiles`             | `auth.users`           | `profiles.id` (CASCADE delete)    |
-| `organizer_profiles`   | `profiles`             | `user_id` (CASCADE delete)        |
 | `sponsor_profiles`     | `profiles`             | `user_id` (CASCADE delete)        |
-| `events`               | `organizer_profiles`   | `organizer_id` (CASCADE delete)   |
+| `events`               | `profiles`             | `organizer_id` (CASCADE delete)   |
 | `events`               | `cities`               | `city_id`                         |
 | `events`               | `event_types`          | `event_type_id`                   |
 | `sponsorship_packages` | `events`               | `event_id` (CASCADE delete)       |
@@ -197,7 +195,7 @@ UNIQUE INDEX on `(sponsor_id, event_id, coalesce(package_id, '00000000-...'::uui
 | `platform_fees`        | `profiles`             | `user_id`                         |
 | `platform_fees`        | `events`               | `event_id` (SET NULL on delete)   |
 | `audit_log`            | `profiles`             | `actor_id`                        |
-| `organizer_profiles`   | `profiles`             | `verified_by`                     |
+| `profiles`             | `profiles`             | `verified_by` (organizer approval) |
 
 ---
 
@@ -206,8 +204,8 @@ UNIQUE INDEX on `(sponsor_id, event_id, coalesce(package_id, '00000000-...'::uui
 | Table                   | Rule                                                                            |
 | ----------------------- | ------------------------------------------------------------------------------- |
 | `cities`, `event_types` | Everyone reads; admin writes                                                    |
-| `profiles`              | Own row or admin                                                                |
-| `organizer_profiles`    | Own row, admin, or approved (public read for sponsors)                          |
+| `profiles`              | Own row or admin. Approved organizer org fields for public/sponsor use: `organizer_directory` view (no phone) |
+| `organizer_profiles`    | DEPRECATED / empty — select only; do not write                                  |
 | `sponsor_profiles`      | Own row, admin, or organizer whose event they showed interest in                |
 | `events`                | Published public: everyone. Published private: sponsors only. Own/admin: always |
 | `sponsorship_packages`  | Follows parent event visibility; organizer or admin writes                      |
@@ -225,7 +223,7 @@ UNIQUE INDEX on `(sponsor_id, event_id, coalesce(package_id, '00000000-...'::uui
 | `set_updated_at`               | profiles, organizer_profiles, sponsor_profiles, events, interests, platform_fees | BEFORE UPDATE — sets `updated_at = now()`                                    |
 | `on_auth_user_created`         | `auth.users`                                                                     | AFTER INSERT — creates a `profiles` row; role from metadata, `admin` blocked |
 | `guard_profile_role`           | `profiles`                                                                       | BEFORE UPDATE — non-admin cannot change `role`                               |
-| `guard_organizer_verification` | `organizer_profiles`                                                             | BEFORE UPDATE — non-admin cannot change verification fields                  |
+| `guard_organizer_verification` | `profiles`                                                                       | BEFORE UPDATE — non-admin cannot change verification fields                  |
 | `guard_sponsor_plan`           | `sponsor_profiles`                                                               | BEFORE UPDATE — non-admin cannot change `plan` or `subscription_expires_at`  |
 | `guard_event_status`           | `events`                                                                         | BEFORE UPDATE — enforces allowed status transitions (BR-03)                  |
 
@@ -244,24 +242,18 @@ To add a new city or event type: `INSERT INTO cities` / `INSERT INTO event_types
 
 ---
 
-## Planned Changes (not yet applied)
+## Applied / planned schema notes
 
-The decisions of 10 Nov 2026 (Razorpay; organizer pays the listing fee before admin review; no refunds; one super admin) need a new migration. Until it is applied, this document describes the current schema. See "Required Schema Changes" in `docs/srs-stage1.md`:
+### Applied — unify organizer into `profiles` (2026-11-11)
 
-- `guard_event_status`: `draft` → `pending_review` only when a paid `event_listing` fee exists (set by the webhook); `rejected` → `pending_review` by the organizer without a new fee. No new event status is needed.
-- Unique partial index: one paid `event_listing` fee per event.
-- Payment deadline (BR-10): Razorpay orders for listing fees are created only while `current_date <= start_date - 7` (server check).
-- `platform_fees` gains `base_paise`, `gst_paise` and `paid_at`. `amount_paise` is the total charged: 10,000 for a listing (GST included); 50,000 plus GST for a subscription.
-- `user_role` gains `super_admin`, with a unique partial index so there is at most one. New `is_super_admin()`; `guard_profile_role` lets only the super admin grant or remove `admin`.
-- New settings table (fee amounts, GST rate, GSTIN when available, launch offer), writable by the super admin only.
-- `profiles.is_support` (boolean, default false): the support permission, changeable only by the super admin. Support admins mark fees refunded for payment errors through server code (BR-16).
-- `review_alert_sent_at` on each reviewable item (event submission and change request), so the hourly job emails the super admin about a review overdue by 48 hours, repeating at most once every 24 hours until it is reviewed (FR-ADM-14).
-- Enable the `pg_cron` and `pg_net` extensions so the database can call the overdue-alert Edge Function every hour; the function sends the email through Resend.
-- Interests and messages insert policies require an active sponsor subscription.
-- Unique indexes on `platform_fees.gateway_order_id` and `gateway_payment_id` for idempotent webhooks.
-- `refunded` and `refund_reason` are used in Stage 1 only to correct payment errors (for example a duplicate charge), set by a support admin.
-- Resubmission (BR-14): `rejected` → `pending_review` and `pending_review` → `published` allowed until `start_date`, with no 7-day check.
-- New `event_change_requests` table for edits to published events (proposed fields and packages as JSON, optional new authority letter, status, reviewer, timestamps). Organizers can no longer update published events or their packages directly; approved requests are applied by server code. A unique partial index allows one `pending` request per event (BR-15).
-- `events.authority_letter_path` (nullable) plus a private `event-documents` storage bucket (PDF only, 5 MB limit): the organizer uploads and reads, admins read (FR-EVT-09).
+Migration `20261111000000_unify_organizer_into_profiles.sql`:
 
-Update the tables above when the migration is applied.
+- Organizer columns live on `profiles` (single table, single `/profile` form).
+- `events.organizer_id` references `profiles(id)`.
+- `guard_organizer_verification` runs on `profiles`.
+- `organizer_directory` view exposes approved organizer org fields without phone (FR-ORG-03 / BR-06).
+- `organizer_profiles` left empty and deprecated (not dropped).
+
+### Earlier decisions migration (`20261110000000_stage1_decisions.sql`)
+
+See "Required Schema Changes" in `docs/srs-stage1.md` for the 10 Nov 2026 items (super_admin, settings, fees, change requests, authority letter, etc.). Those are covered by that migration file; keep this document aligned when further schema lands.

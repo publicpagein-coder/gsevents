@@ -6,11 +6,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
+import { isOrganizerProfileIncomplete } from "@/lib/organizer-profile";
 import type { Database } from "@/lib/supabase/types";
 
-type OrgProfileRejection = Pick<
-  Database["public"]["Tables"]["organizer_profiles"]["Row"],
-  "verification_status" | "rejection_reason"
+type ProfileRejection = Pick<
+  Database["public"]["Tables"]["profiles"]["Row"],
+  "org_name" | "org_type" | "venue_name" | "verification_status" | "rejection_reason"
 >;
 
 interface Props {
@@ -32,17 +33,19 @@ export default async function RejectedPage({ params }: Props) {
 
   if (!user) redirect(`/${locale}/auth/sign-in`);
 
-  const { data: orgProfileData } = await supabase
-    .from("organizer_profiles")
-    .select("verification_status, rejection_reason")
-    .eq("user_id", user.id)
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("org_name, org_type, venue_name, verification_status, rejection_reason")
+    .eq("id", user.id)
     .maybeSingle();
 
-  const orgProfile = orgProfileData as OrgProfileRejection | null;
+  const profile = profileData as ProfileRejection | null;
 
-  if (!orgProfile) redirect(`/${locale}/profile/complete`);
-  if (orgProfile.verification_status === "approved") redirect(`/${locale}/`);
-  if (orgProfile.verification_status === "pending") redirect(`/${locale}/pending`);
+  if (!profile || isOrganizerProfileIncomplete(profile)) {
+    redirect(`/${locale}/profile`);
+  }
+  if (profile.verification_status === "approved") redirect(`/${locale}/`);
+  if (profile.verification_status === "pending") redirect(`/${locale}/pending`);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
@@ -58,14 +61,14 @@ export default async function RejectedPage({ params }: Props) {
           <Alert variant="destructive">
             <AlertTitle>{t("reasonLabel")}</AlertTitle>
             <AlertDescription>
-              {orgProfile.rejection_reason ?? t("noReason")}
+              {profile.rejection_reason ?? t("noReason")}
             </AlertDescription>
           </Alert>
           <p className="text-sm text-muted-foreground">{t("contactSupport")}</p>
         </CardContent>
         <CardFooter>
           <Button asChild className="w-full">
-            <Link href={`/${locale}/profile/complete`}>{t("updateProfile")}</Link>
+            <Link href={`/${locale}/profile`}>{t("updateProfile")}</Link>
           </Button>
         </CardFooter>
       </Card>

@@ -4,11 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Clock } from "lucide-react";
+import { isOrganizerProfileIncomplete } from "@/lib/organizer-profile";
 import type { Database } from "@/lib/supabase/types";
 
-type OrgProfileStatus = Pick<
-  Database["public"]["Tables"]["organizer_profiles"]["Row"],
-  "verification_status"
+type ProfileStatus = Pick<
+  Database["public"]["Tables"]["profiles"]["Row"],
+  "org_name" | "org_type" | "venue_name" | "verification_status"
 >;
 
 interface Props {
@@ -30,17 +31,19 @@ export default async function PendingPage({ params }: Props) {
 
   if (!user) redirect(`/${locale}/auth/sign-in`);
 
-  const { data: orgProfileData } = await supabase
-    .from("organizer_profiles")
-    .select("verification_status")
-    .eq("user_id", user.id)
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("org_name, org_type, venue_name, verification_status")
+    .eq("id", user.id)
     .maybeSingle();
 
-  const orgProfile = orgProfileData as OrgProfileStatus | null;
+  const profile = profileData as ProfileStatus | null;
 
-  if (!orgProfile) redirect(`/${locale}/profile/complete`);
-  if (orgProfile.verification_status === "approved") redirect(`/${locale}/`);
-  if (orgProfile.verification_status === "rejected") redirect(`/${locale}/rejected`);
+  if (!profile || isOrganizerProfileIncomplete(profile)) {
+    redirect(`/${locale}/profile`);
+  }
+  if (profile.verification_status === "approved") redirect(`/${locale}/`);
+  if (profile.verification_status === "rejected") redirect(`/${locale}/rejected`);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">

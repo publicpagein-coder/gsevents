@@ -11,7 +11,7 @@ interface ProfilePageProps {
 
 type City = { id: number; name: string; state: string };
 
-/** FR-AUTH-03 — View and edit profile (server component). */
+/** FR-AUTH-03 / FR-ORG-01 — Unified profile (personal + organizer fields). */
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { locale } = await params;
   const t = await getTranslations("profile");
@@ -25,14 +25,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     redirect(`/${locale}/auth/sign-in`);
   }
 
-  // Fetch the profile row for the signed-in user.
   const { data: profileRow } = await supabase
     .from("profiles")
-    .select("full_name, phone, city_id, preferred_language, role")
+    .select(
+      "full_name, phone, city_id, preferred_language, role, org_name, org_type, venue_name, social_link, proof_note, verification_status",
+    )
     .eq("id", user.id)
     .single();
 
-  // Fetch cities list for the city selector.
   const { data: citiesData } = await supabase
     .from("cities")
     .select("id, name, state")
@@ -52,10 +52,18 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         fullName={safeStrNullable(profile?.full_name)}
         phone={safeStr(profile?.phone)}
         cityId={safeNumNullable(profile?.city_id)}
-        preferredLanguage={safeStr(profile?.preferred_language) as "en" | "hi" | "gu" || "en"}
+        preferredLanguage={
+          (safeStr(profile?.preferred_language) as "en" | "hi" | "gu") || "en"
+        }
         role={safeStr(profile?.role)}
         cities={cities.map((c) => ({ id: c.id, name: `${c.name}, ${c.state}` }))}
         locale={locale}
+        orgName={safeStrNullable(profile?.org_name)}
+        orgType={safeStrNullable(profile?.org_type)}
+        venueName={safeStrNullable(profile?.venue_name)}
+        socialLink={safeStrNullable(profile?.social_link)}
+        proofNote={safeStrNullable(profile?.proof_note)}
+        verificationStatus={safeStrNullable(profile?.verification_status)}
       />
     </div>
   );
