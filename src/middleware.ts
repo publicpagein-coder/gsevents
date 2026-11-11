@@ -3,8 +3,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { routing } from "./i18n/routing";
 import type { Database } from "./lib/supabase/types";
+import { isOrganizerProfileIncomplete } from "./lib/organizer-profile";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
+type VerificationStatus = Database["public"]["Enums"]["verification_status"];
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -79,52 +81,53 @@ export async function middleware(request: NextRequest) {
     return redirectTo("/auth/sign-in");
   }
 
-  // Fetch the profile row to check role and organizer profile completion.
+  // Fetch the profile row (role + organizer fields live on profiles).
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, org_name, org_type, venue_name, verification_status")
     .eq("id", user.id)
     .single();
 
-  const role = (profileData as { role: UserRole } | null)?.role;
+  type ProfileGate = {
+    role: UserRole;
+    org_name: string | null;
+    org_type: string | null;
+    venue_name: string | null;
+    verification_status: VerificationStatus | null;
+  };
 
-  // Organizer profile-completion gate.
-  // If the organizer has not yet created their organizer_profiles row, send them
-  // to the completion screen (except if they are already on it or on pending/rejected).
+  const profile = profileData as ProfileGate | null;
+  const role = profile?.role;
+
+  // Organizer profile-completion gate (unified profiles table).
+  // Incomplete = missing required org fields on profiles (not a missing row).
+  // /profile is allowed so organizers can fill or resubmit the unified form.
   if (
     role === "organizer" &&
-    !logicalPath.startsWith("/profile/complete") &&
-    !logicalPath.startsWith("/pending") &&
-    !logicalPath.startsWith("/rejected") &&
+    profile &&
     !logicalPath.startsWith("/auth")
   ) {
-    const { data: orgProfileData } = await supabase
-      .from("organizer_profiles")
-      .select("user_id, verification_status")
-      .eq("user_id", user.id)
-      .single();
+    const incomplete = isOrganizerProfileIncomplete({
+      org_name: profile.org_name,
+      org_type: profile.org_type,
+      venue_name: profile.venue_name,
+    });
 
-    type OrgProfile = { user_id: string; verification_status: "pending" | "approved" | "rejected" };
-    const orgProfile = orgProfileData as OrgProfile | null;
-
-    if (!orgProfile) {
-      return redirectTo("/profile/complete");
-    }
-
-    // Profile exists but is pending → hold on the pending page (unless already there)
-    if (
-      orgProfile.verification_status === "pending" &&
-      !logicalPath.startsWith("/pending")
-    ) {
-      return redirectTo("/pending");
-    }
-
-    // Profile rejected → show the rejected screen
-    if (
-      orgProfile.verification_status === "rejected" &&
-      !logicalPath.startsWith("/rejected")
-    ) {
-      return redirectTo("/rejected");
+    if (incomplete) {
+      if (!logicalPath.startsWith("/profile")) {
+        return redirectTo("/profile");
+      }
+    } else if (profile.verification_status === "pending") {
+      if (!logicalPath.startsWith("/pending")) {
+        return redirectTo("/pending");
+      }
+    } else if (profile.verification_status === "rejected") {
+      if (
+        !logicalPath.startsWith("/rejected") &&
+        !logicalPath.startsWith("/profile")
+      ) {
+        return redirectTo("/rejected");
+      }
     }
   }
 

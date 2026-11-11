@@ -4,9 +4,11 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { safeStr } from "@/lib/db-utils";
+import { isOrganizerProfileIncomplete } from "@/lib/organizer-profile";
 import type { Database } from "@/lib/supabase/types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
+type VerificationStatus = Database["public"]["Enums"]["verification_status"];
 
 // FR-ORG-01: organizer_type uses the existing schema enum
 const OrgTypeValues = ["society", "club", "company", "other"] as const;
@@ -30,15 +32,12 @@ export type SaveProfileResult =
   | { success: true }
   | { success: false; error: string; fieldErrors?: Record<string, string[]> };
 
+export { isOrganizerProfileIncomplete };
+
 /**
- * FR-ORG-01: Upsert the organizer_profiles row for the signed-in user.
- * Uses the service-role client so the write is not blocked by RLS during
- * initial profile creation (the RLS insert policy requires the row to not
- * exist yet, which is fine, but we use admin client for consistency with
- * all privileged writes in this codebase).
- *
- * verification_status is left at 'pending' — the trigger already sets it
- * and the guard trigger prevents the organizer from changing it.
+ * FR-ORG-01: Save organizer fields onto the signed-in user's profiles row.
+ * verification_status is set to 'pending' on create/resubmit; the guard
+ * trigger prevents the organizer from changing verification fields themselves.
  */
 export async function saveOrganizerProfile(
   formData: FormData,
@@ -55,11 +54,17 @@ export async function saveOrganizerProfile(
   // Verify the caller is actually an organizer (never trust the client for role)
   const { data: profileData } = await serverClient
     .from("profiles")
-    .select("role")
+    .select("role, verification_status, org_name, org_type, venue_name")
     .eq("id", user.id)
     .single();
 
-  const profile = profileData as { role: UserRole } | null;
+  const profile = profileData as {
+    role: UserRole;
+    verification_status: VerificationStatus | null;
+    org_name: string | null;
+    org_type: string | null;
+    venue_name: string | null;
+  } | null;
 
   if (profile?.role !== "organizer") {
     return { success: false, error: "Only organizers can complete an organizer profile" };
@@ -84,17 +89,8 @@ export async function saveOrganizerProfile(
 
   const { org_name, org_type, venue_name, social_link, proof_note } = parsed.data;
 
-  const adminClient = createAdminClient();
-
-  // Check whether a row already exists (upsert path for profile edits)
-  const { data: existing } = await adminClient
-    .from("organizer_profiles")
-    .select("user_id, verification_status")
-    .eq("user_id", user.id)
-    .single();
-
   // Do not allow editing verification-sensitive fields once approved
-  if (existing?.verification_status === "approved") {
+  if (profile.verification_status === "approved") {
     return {
       success: false,
       error:
@@ -102,31 +98,38 @@ export async function saveOrganizerProfile(
     };
   }
 
-  const { error: upsertError } = await adminClient
-    .from("organizer_profiles")
-    .upsert(
-      {
-        user_id: user.id,
-        org_name,
-        org_type,
-        venue_name,
-        social_link: social_link || null,
-        proof_note: proof_note || null,
-        // Keep verification_status at 'pending' — always re-set on resubmission
-        verification_status: "pending",
-      },
-      { onConflict: "user_id" },
-    );
+  const hadOrgFields = !isOrganizerProfileIncomplete({
+    org_name: profile.org_name,
+    org_type: profile.org_type,
+    venue_name: profile.venue_name,
+  });
 
-  if (upsertError) {
-    return { success: false, error: safeStr(upsertError.message) };
+  const adminClient = createAdminClient();
+
+  // Service-role write so verification_status can be set to pending on resubmit
+  // (organizer RLS + guard would block self-updating verification fields).
+  const { error: updateError } = await adminClient
+    .from("profiles")
+    .update({
+      org_name,
+      org_type,
+      venue_name,
+      social_link: social_link || null,
+      proof_note: proof_note || null,
+      verification_status: "pending",
+      rejection_reason: null,
+    })
+    .eq("id", user.id);
+
+  if (updateError) {
+    return { success: false, error: safeStr(updateError.message) };
   }
 
   // Audit log
   await adminClient.from("audit_log").insert({
     actor_id: user.id,
-    action: existing ? "resubmit_organizer_profile" : "create_organizer_profile",
-    entity: "organizer_profiles",
+    action: hadOrgFields ? "resubmit_organizer_profile" : "create_organizer_profile",
+    entity: "profiles",
     entity_id: user.id,
   });
 

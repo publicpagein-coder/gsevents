@@ -96,7 +96,7 @@ function makeAdminClient(
     from: vi.fn((table: string) => {
       if (table === targetTable) return targetChain;
       if (table === "audit_log") return auditChain;
-      // Fallback chain (e.g. events table when targetTable is organizer_profiles)
+      // Fallback chain (e.g. events table when targetTable is profiles)
       const fb = makeChain();
       return fb;
     }),
@@ -126,7 +126,7 @@ describe("approveOrganizer", () => {
       makeServerClient("admin"),
     );
     (createAdminClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      makeAdminClient("organizer_profiles", null),
+      makeAdminClient("profiles", null),
     );
     const fd = new FormData();
     fd.set("organizerId", "not-a-uuid");
@@ -139,7 +139,11 @@ describe("approveOrganizer", () => {
       makeServerClient("admin"),
     );
     (createAdminClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      makeAdminClient("organizer_profiles", { verification_status: "pending" }),
+      makeAdminClient("profiles", {
+        id: "00000000-0000-0000-0000-000000000001",
+        role: "organizer",
+        verification_status: "pending",
+      }),
     );
     const fd = new FormData();
     fd.set("organizerId", "00000000-0000-0000-0000-000000000001");
@@ -152,7 +156,11 @@ describe("approveOrganizer", () => {
       makeServerClient("super_admin"),
     );
     (createAdminClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      makeAdminClient("organizer_profiles", { verification_status: "pending" }),
+      makeAdminClient("profiles", {
+        id: "00000000-0000-0000-0000-000000000001",
+        role: "organizer",
+        verification_status: "pending",
+      }),
     );
     const fd = new FormData();
     fd.set("organizerId", "00000000-0000-0000-0000-000000000001");
@@ -184,7 +192,11 @@ describe("rejectOrganizer", () => {
       makeServerClient("admin"),
     );
     (createAdminClient as ReturnType<typeof vi.fn>).mockReturnValue(
-      makeAdminClient("organizer_profiles", { verification_status: "pending" }),
+      makeAdminClient("profiles", {
+        id: "00000000-0000-0000-0000-000000000001",
+        role: "organizer",
+        verification_status: "pending",
+      }),
     );
     const fd = new FormData();
     fd.set("organizerId", "00000000-0000-0000-0000-000000000001");

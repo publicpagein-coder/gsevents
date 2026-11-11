@@ -78,22 +78,33 @@ export async function approveOrganizer(formData: FormData): Promise<ActionResult
   const { organizerId } = parsed.data;
   const adminClient = createAdminClient();
 
+  const { data: targetData } = await adminClient
+    .from("profiles")
+    .select("id, role")
+    .eq("id", organizerId)
+    .single();
+
+  const target = targetData as { id: string; role: UserRole } | null;
+  if (!target || target.role !== "organizer") {
+    return { success: false, error: "Organizer profile not found" };
+  }
+
   const { error } = await adminClient
-    .from("organizer_profiles")
+    .from("profiles")
     .update({
       verification_status: "approved",
       verified_at: new Date().toISOString(),
       verified_by: auth.userId,
       rejection_reason: null,
     })
-    .eq("user_id", organizerId);
+    .eq("id", organizerId);
 
   if (error) return { success: false, error: safeStr(error.message) };
 
   await adminClient.from("audit_log").insert({
     actor_id: auth.userId,
     action: "approve_organizer",
-    entity: "organizer_profiles",
+    entity: "profiles",
     entity_id: organizerId,
   });
 
@@ -113,20 +124,31 @@ export async function rejectOrganizer(formData: FormData): Promise<ActionResult>
   const { organizerId, reason } = parsed.data;
   const adminClient = createAdminClient();
 
+  const { data: targetData } = await adminClient
+    .from("profiles")
+    .select("id, role")
+    .eq("id", organizerId)
+    .single();
+
+  const target = targetData as { id: string; role: UserRole } | null;
+  if (!target || target.role !== "organizer") {
+    return { success: false, error: "Organizer profile not found" };
+  }
+
   const { error } = await adminClient
-    .from("organizer_profiles")
+    .from("profiles")
     .update({
       verification_status: "rejected",
       rejection_reason: reason,
     })
-    .eq("user_id", organizerId);
+    .eq("id", organizerId);
 
   if (error) return { success: false, error: safeStr(error.message) };
 
   await adminClient.from("audit_log").insert({
     actor_id: auth.userId,
     action: "reject_organizer",
-    entity: "organizer_profiles",
+    entity: "profiles",
     entity_id: organizerId,
     details: { reason },
   });

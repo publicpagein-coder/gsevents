@@ -16,8 +16,9 @@ export default async function AdminPage({ params }: Props) {
   const [{ count: pendingOrgs }, { count: pendingEvents }, { count: pendingChanges }] =
     await Promise.all([
       adminClient
-        .from("organizer_profiles")
+        .from("profiles")
         .select("*", { count: "exact", head: true })
+        .eq("role", "organizer")
         .eq("verification_status", "pending"),
       adminClient
         .from("events")

@@ -5,7 +5,7 @@ import { EventQueueClient, type EventRow } from "./EventQueueClient";
 import type { Database } from "@/lib/supabase/types";
 
 type EventDbRow = Database["public"]["Tables"]["events"]["Row"];
-type OrgProfileRow = Database["public"]["Tables"]["organizer_profiles"]["Row"];
+type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type CityRow = Database["public"]["Tables"]["cities"]["Row"];
 type FeeRow = Database["public"]["Tables"]["platform_fees"]["Row"];
 
@@ -48,9 +48,9 @@ export default async function EventQueuePage() {
 
   const [{ data: orgRows }, { data: cityRows }, { data: feeRows }] = await Promise.all([
     adminClient
-      .from("organizer_profiles")
-      .select("user_id, org_name")
-      .in("user_id", organizerIds),
+      .from("profiles")
+      .select("id, org_name")
+      .in("id", organizerIds),
     adminClient.from("cities").select("id, name").in("id", cityIds),
     adminClient
       .from("platform_fees")
@@ -61,8 +61,8 @@ export default async function EventQueuePage() {
   ]);
 
   const orgMap: Record<string, string> = {};
-  for (const o of (orgRows ?? []) as Pick<OrgProfileRow, "user_id" | "org_name">[]) {
-    orgMap[o.user_id] = o.org_name;
+  for (const o of (orgRows ?? []) as Pick<ProfileRow, "id" | "org_name">[]) {
+    orgMap[o.id] = o.org_name ?? "";
   }
 
   const cityMap: Record<number, string> = {};
