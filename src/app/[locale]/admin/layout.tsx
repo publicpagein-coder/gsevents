@@ -65,6 +65,12 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
           >
             {t("queues.changes")}
           </Link>
+          <Link
+            href={`/${locale}/admin/fees`}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            {t("queues.fees")}
+          </Link>
           {isSuperAdmin && (
             <Link
               href={`/${locale}/admin/super`}

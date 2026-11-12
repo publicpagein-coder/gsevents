@@ -148,7 +148,8 @@
     "queues": {
       "organizers": "Organizer Queue",
       "events": "Event Queue",
-      "changes": "Change Requests"
+      "changes": "Change Requests",
+      "fees": "Fees"
     },
     "pending": "Pending",
     "organizerQueue": {
@@ -237,6 +238,85 @@
       "launchOfferPlaceholder": "Optional promotional copy shown to sponsors",
       "saveSuccess": "Settings saved.",
       "note": "Changes take effect immediately for new orders. Existing orders are not affected."
+    }
+  },
+  "fees": {
+    "checkoutName": "GS Events",
+    "payButton": "Pay {amount}",
+    "checkoutLoadError": "Could not load the payment form. Please try again.",
+    "paymentSubmittedTitle": "Payment submitted",
+    "paymentSubmittedBody": "We are confirming your payment. This page will update once the payment is verified.",
+    "amount": "Amount",
+    "gstin": "GSTIN: {gstin}",
+    "settingsUnavailable": "Fee settings are unavailable. Please try again later.",
+    "types": {
+      "event_listing": "Event listing fee",
+      "sponsor_subscription": "Sponsor subscription"
+    },
+    "listing": {
+      "title": "Pay listing fee",
+      "subtitle": "Pay the listing fee to submit this draft event for review.",
+      "event": "Event",
+      "startDate": "Start date",
+      "status": "Status",
+      "gstIncluded": "Includes GST (taxable {base} + GST {gst})",
+      "checkoutDescription": "Listing fee for {title}",
+      "alreadyPaidTitle": "Listing fee already paid",
+      "alreadyPaidBody": "This event already has a paid listing fee of {amount}.",
+      "notDraftTitle": "Not a draft",
+      "notDraftBody": "Only draft events can pay the listing fee for first submission.",
+      "deadlineTitle": "Payment deadline passed",
+      "deadlineBody": "The listing fee must be paid at least 7 days before the event start date."
+    },
+    "subscription": {
+      "title": "Sponsor subscription",
+      "subtitle": "Pay the yearly subscription to unlock interest and chat.",
+      "breakdown": "Base {base} + GST {gst}",
+      "checkoutDescription": "Yearly sponsor subscription",
+      "noProfile": "Sponsor profile not found.",
+      "activeTitle": "Subscription active",
+      "activeBody": "Your subscription is active until {expires}. You can renew early to extend it."
+    },
+    "history": {
+      "title": "Fee history",
+      "subtitle": "Your platform fee payments and receipts.",
+      "back": "Home",
+      "backToHistory": "Back to fee history",
+      "empty": "No fees yet.",
+      "type": "Type",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date",
+      "receipt": "Receipt",
+      "viewReceipt": "View",
+      "split": "Base {base} · GST {gst}",
+      "noGstin": "GSTIN will appear on receipts once added in fee settings."
+    },
+    "receipt": {
+      "title": "Receipt",
+      "type": "Fee type",
+      "status": "Status",
+      "amount": "Total paid",
+      "base": "Taxable value",
+      "gst": "GST",
+      "gstin": "GSTIN",
+      "created": "Created",
+      "paidAt": "Paid at",
+      "orderId": "Order reference",
+      "refundReason": "Refund reason"
+    },
+    "refund": {
+      "reasonLabel": "Refund reason (payment error)",
+      "reasonPlaceholder": "e.g. Duplicate charge — refunded in Razorpay dashboard",
+      "submit": "Mark refunded",
+      "success": "Fee marked as refunded."
+    },
+    "admin": {
+      "title": "Platform fees",
+      "subtitle": "Recent fee payments. Support admins can mark payment-error refunds.",
+      "supportOnly": "Marking refunds requires the support permission.",
+      "empty": "No fees recorded yet.",
+      "actions": "Actions"
     }
   }
 }
