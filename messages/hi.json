@@ -32,7 +32,8 @@
     "profile": "प्रोफ़ाइल",
     "admin": "एडमिन",
     "signIn": "साइन इन",
-    "signOut": "साइन आउट"
+    "signOut": "साइन आउट",
+    "myEvents": "मेरे इवेंट्स"
   },
   "locale": {
     "en": "English",
@@ -317,6 +318,98 @@
       "supportOnly": "रिफ़ंड चिह्नित करने के लिए सपोर्ट अनुमति आवश्यक है।",
       "empty": "अभी कोई शुल्क नहीं।",
       "actions": "कार्रवाई"
+    }
+  },
+  "events": {
+    "backToList": "मेरे इवेंट्स पर वापस",
+    "backToDetail": "इवेंट पर वापस",
+    "list": {
+      "title": "मेरे इवेंट्स",
+      "subtitle": "ड्राफ्ट बनाएं, लिस्टिंग शुल्क भरें, और समीक्षा स्थिति देखें।",
+      "create": "नया इवेंट",
+      "empty": "आपने अभी तक कोई इवेंट नहीं बनाया है।"
+    },
+    "new": {
+      "title": "इवेंट बनाएं",
+      "subtitle": "ड्राफ्ट के रूप में सहेजा जाएगा। समीक्षा के लिए सबमिट करने से पहले लिस्टिंग शुल्क भरें।"
+    },
+    "edit": {
+      "title": "इवेंट संपादित करें",
+      "subtitle": "ड्राफ्ट या अस्वीकृत लिस्टिंग और पैकेज अपडेट करें।",
+      "changeRequestTitle": "बदलाव का अनुरोध",
+      "changeRequestSubtitle": "प्रस्तावित बदलाव एडमिन समीक्षा में जाएंगे। स्वीकृति तक लाइव लिस्टिंग नहीं बदलेगी।"
+    },
+    "detail": {
+      "summary": "विवरण",
+      "rejectedTitle": "अस्वीकृत",
+      "pendingChangeTitle": "बदलाव अनुरोध लंबित",
+      "pendingChangeBody": "{date} को जमा। एडमिन समीक्षा तक प्रकाशित लिस्टिंग अपरिवर्तित रहेगी।"
+    },
+    "status": {
+      "draft": "ड्राफ्ट",
+      "pending_review": "समीक्षा लंबित",
+      "published": "प्रकाशित",
+      "rejected": "अस्वीकृत",
+      "cancelled": "रद्द",
+      "completed": "पूर्ण"
+    },
+    "visibility": {
+      "public": "सार्वजनिक",
+      "private": "निजी (केवल स्पॉन्सर)"
+    },
+    "form": {
+      "title": "इवेंट शीर्षक",
+      "description": "विवरण",
+      "eventType": "इवेंट प्रकार",
+      "eventTypePlaceholder": "प्रकार चुनें",
+      "city": "शहर",
+      "cityPlaceholder": "शहर चुनें",
+      "venue": "स्थान",
+      "season": "सीज़न टैग",
+      "seasonPlaceholder": "जैसे navratri-2027",
+      "startDate": "आरंभ तिथि",
+      "endDate": "समाप्ति तिथि",
+      "dates": "तिथियाँ",
+      "expectedAudience": "अनुमानित दर्शक",
+      "audienceNotes": "दर्शक नोट्स",
+      "visibility": "दृश्यता",
+      "visibilityPublic": "सार्वजनिक",
+      "visibilityPrivate": "निजी (केवल स्पॉन्सर)",
+      "visibilityHelp": "निजी इवेंट केवल साइन-इन स्पॉन्सर देख सकते हैं।",
+      "ticketingHidden": "स्टेज 1 में टिकटिंग उपलब्ध नहीं है और none पर रहती है।",
+      "authorityLetter": "सरकारी अनुमति पत्र (वैकल्पिक)",
+      "authorityLetterHelp": "केवल PDF, अधिकतम 5 MB। एडमिन सत्यापन में मदद करता है। केवल आप और एडमिन देख सकते हैं।",
+      "authorityLetterPresent": "पत्र पहले से मौजूद है। बदलने के लिए नया PDF अपलोड करें।",
+      "authorityLetterMissing": "अभी कोई पत्र अपलोड नहीं हुआ।",
+      "submitCreate": "ड्राफ्ट सहेजें",
+      "submitSave": "बदलाव सहेजें",
+      "submitChangeRequest": "समीक्षा के लिए भेजें",
+      "changeRequestNoticeTitle": "प्रकाशित इवेंट",
+      "changeRequestNoticeBody": "आपके बदलाव एडमिन समीक्षा में जाएंगे। तब तक स्पॉन्सर वर्तमान प्रकाशित संस्करण देखेंगे।"
+    },
+    "packages": {
+      "title": "स्पॉन्सरशिप पैकेज",
+      "subtitle": "नाम और कीमत के साथ कम से कम एक पैकेज जोड़ें।",
+      "add": "पैकेज जोड़ें",
+      "remove": "हटाएं",
+      "itemLabel": "पैकेज {n}",
+      "name": "पैकेज नाम",
+      "priceRupees": "कीमत (₹)",
+      "pricePreview": "संग्रहित: {amount}",
+      "deliverables": "डिलिवरेबल्स",
+      "slots": "स्लॉट संख्या",
+      "slotsOptional": "वैकल्पिक",
+      "slotsCount": "{count} स्लॉट",
+      "empty": "अभी कोई पैकेज नहीं।"
+    },
+    "actions": {
+      "payAndSubmit": "लिस्टिंग शुल्क भरें",
+      "resubmit": "फिर से समीक्षा के लिए भेजें",
+      "cancelEvent": "इवेंट रद्द करें",
+      "cancelConfirm": "यह इवेंट रद्द करें? लिस्टिंग शुल्क वापस नहीं होगा।",
+      "deleteConfirm": "यह ड्राफ्ट स्थायी रूप से हटाएं?",
+      "requestChanges": "बदलाव अनुरोध करें",
+      "viewLetter": "अनुमति पत्र देखें"
     }
   }
 }

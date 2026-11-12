@@ -32,7 +32,8 @@
     "profile": "પ્રોફાઇલ",
     "admin": "એડમિન",
     "signIn": "સાઇન ઇન",
-    "signOut": "સાઇન આઉટ"
+    "signOut": "સાઇન આઉટ",
+    "myEvents": "મારા ઈવેન્ટ્સ"
   },
   "locale": {
     "en": "English",
@@ -317,6 +318,98 @@
       "supportOnly": "રિફંડ ચિહ્નિત કરવા સપોર્ટ પરવાનગી જરૂરી છે.",
       "empty": "હજુ કોઈ ફી નથી.",
       "actions": "ક્રિયાઓ"
+    }
+  },
+  "events": {
+    "backToList": "મારા ઈવેન્ટ્સ પર પાછા",
+    "backToDetail": "ઈવેન્ટ પર પાછા",
+    "list": {
+      "title": "મારા ઈવેન્ટ્સ",
+      "subtitle": "ડ્રાફ્ટ બનાવો, લિસ્ટિંગ ફી ભરો, અને સમીક્ષા સ્થિતિ જુઓ.",
+      "create": "નવો ઈવેન્ટ",
+      "empty": "તમે હજુ સુધી કોઈ ઈવેન્ટ બનાવ્યો નથી."
+    },
+    "new": {
+      "title": "ઈવેન્ટ બનાવો",
+      "subtitle": "ડ્રાફ્ટ તરીકે સાચવાશે. સમીક્ષા માટે મોકલતા પહેલાં લિસ્ટિંગ ફી ભરો."
+    },
+    "edit": {
+      "title": "ઈવેન્ટ સંપાદિત કરો",
+      "subtitle": "ડ્રાફ્ટ અથવા નકારાયેલી લિસ્ટિંગ અને પેકેજ અપડેટ કરો.",
+      "changeRequestTitle": "ફેરફારની વિનંતી",
+      "changeRequestSubtitle": "સૂચિત ફેરફારો એડમિન સમીક્ષામાં જશે. મંજૂરી સુધી લાઇવ લિસ્ટિંગ યથાવત્ રહેશે."
+    },
+    "detail": {
+      "summary": "વિગતો",
+      "rejectedTitle": "નકારાયેલ",
+      "pendingChangeTitle": "ફેરફાર વિનંતી બાકી",
+      "pendingChangeBody": "{date} ના રોજ મોકલ્યું. એડમિન સમીક્ષા સુધી પ્રકાશિત લિસ્ટિંગ યથાવત્ રહેશે."
+    },
+    "status": {
+      "draft": "ડ્રાફ્ટ",
+      "pending_review": "સમીક્ષા બાકી",
+      "published": "પ્રકાશિત",
+      "rejected": "નકારાયેલ",
+      "cancelled": "રદ",
+      "completed": "પૂર્ણ"
+    },
+    "visibility": {
+      "public": "જાહેર",
+      "private": "ખાનગી (ફક્ત સ્પોન્સર)"
+    },
+    "form": {
+      "title": "ઈવેન્ટ શીર્ષક",
+      "description": "વર્ણન",
+      "eventType": "ઈવેન્ટ પ્રકાર",
+      "eventTypePlaceholder": "પ્રકાર પસંદ કરો",
+      "city": "શહેર",
+      "cityPlaceholder": "શહેર પસંદ કરો",
+      "venue": "સ્થળ",
+      "season": "સીઝન ટેગ",
+      "seasonPlaceholder": "દા.ત. navratri-2027",
+      "startDate": "શરૂઆત તારીખ",
+      "endDate": "અંત તારીખ",
+      "dates": "તારીખો",
+      "expectedAudience": "અંદાજિત પ્રેક્ષકો",
+      "audienceNotes": "પ્રેક્ષક નોંધ",
+      "visibility": "દૃશ્યતા",
+      "visibilityPublic": "જાહેર",
+      "visibilityPrivate": "ખાનગી (ફક્ત સ્પોન્સર)",
+      "visibilityHelp": "ખાનગી ઈવેન્ટ્સ ફક્ત સાઇન-ઇન સ્પોન્સર જોઈ શકે છે.",
+      "ticketingHidden": "સ્ટેજ 1માં ટિકિટિંગ ઉપલબ્ધ નથી અને none પર રહે છે.",
+      "authorityLetter": "સરકારી પરવાનગી પત્ર (વૈકલ્પિક)",
+      "authorityLetterHelp": "ફક્ત PDF, મહત્તમ 5 MB. એડમિન ચકાસણીમાં મદદ કરે છે. ફક્ત તમે અને એડમિન જોઈ શકે છે.",
+      "authorityLetterPresent": "પત્ર પહેલેથી છે. બદલવા માટે નવી PDF અપલોડ કરો.",
+      "authorityLetterMissing": "હજુ કોઈ પત્ર અપલોડ થયો નથી.",
+      "submitCreate": "ડ્રાફ્ટ સાચવો",
+      "submitSave": "ફેરફારો સાચવો",
+      "submitChangeRequest": "સમીક્ષા માટે મોકલો",
+      "changeRequestNoticeTitle": "પ્રકાશિત ઈવેન્ટ",
+      "changeRequestNoticeBody": "તમારા ફેરફારો એડમિન સમીક્ષામાં જશે. ત્યાં સુધી સ્પોન્સર વર્તમાન પ્રકાશિત આવૃત્તિ જોશે."
+    },
+    "packages": {
+      "title": "સ્પોન્સરશિપ પેકેજ",
+      "subtitle": "નામ અને કિંમત સાથે ઓછામાં ઓછું એક પેકેજ ઉમેરો.",
+      "add": "પેકેજ ઉમેરો",
+      "remove": "કાઢો",
+      "itemLabel": "પેકેજ {n}",
+      "name": "પેકેજ નામ",
+      "priceRupees": "કિંમત (₹)",
+      "pricePreview": "સંગ્રહ: {amount}",
+      "deliverables": "ડિલિવરેબલ્સ",
+      "slots": "સ્લોટ સંખ્યા",
+      "slotsOptional": "વૈકલ્પિક",
+      "slotsCount": "{count} સ્લોટ",
+      "empty": "હજુ કોઈ પેકેજ નથી."
+    },
+    "actions": {
+      "payAndSubmit": "લિસ્ટિંગ ફી ભરો",
+      "resubmit": "ફરી સમીક્ષા માટે મોકલો",
+      "cancelEvent": "ઈવેન્ટ રદ કરો",
+      "cancelConfirm": "આ ઈવેન્ટ રદ કરો? લિસ્ટિંગ ફી પરત મળશે નહીં.",
+      "deleteConfirm": "આ ડ્રાફ્ટ કાયમી રીતે કાઢી નાખો?",
+      "requestChanges": "ફેરફારની વિનંતી",
+      "viewLetter": "પરવાનગી પત્ર જુઓ"
     }
   }
 }

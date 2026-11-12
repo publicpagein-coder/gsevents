@@ -357,6 +357,82 @@ describe("approveChangeRequest", () => {
     const result = await approveChangeRequest(fd);
     expect(result.success).toBe(false);
   });
+
+  it("applies proposed packages and letter path when approving", async () => {
+    (createClient as ReturnType<typeof vi.fn>).mockResolvedValue(
+      makeServerClient("admin"),
+    );
+
+    const eventsUpdate = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+    const packagesDeleteEq = vi.fn().mockResolvedValue({ error: null });
+    const packagesInsert = vi.fn().mockResolvedValue({ error: null });
+    const crUpdateEq = vi.fn().mockResolvedValue({ error: null });
+
+    (createAdminClient as ReturnType<typeof vi.fn>).mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "event_change_requests") {
+          let mode: "select" | "update" = "select";
+          const chain: Record<string, unknown> = {};
+          chain["select"] = vi.fn().mockImplementation(() => {
+            mode = "select";
+            return chain;
+          });
+          chain["update"] = vi.fn().mockImplementation(() => {
+            mode = "update";
+            return chain;
+          });
+          chain["eq"] = vi.fn().mockImplementation(() => {
+            if (mode === "update") return crUpdateEq();
+            return chain;
+          });
+          chain["single"] = vi.fn().mockResolvedValue({
+            data: {
+              event_id: "00000000-0000-0000-0000-000000000010",
+              proposed_fields: { title: "Updated title", city_id: 2 },
+              proposed_packages: [
+                {
+                  name: "Gold",
+                  price_paise: 100000,
+                  deliverables: "Logo",
+                  slots_total: 1,
+                },
+              ],
+              new_authority_letter_path: "org/evt/letter.pdf",
+              status: "pending",
+            },
+          });
+          return chain;
+        }
+        if (table === "events") {
+          return { update: eventsUpdate };
+        }
+        if (table === "sponsorship_packages") {
+          return {
+            delete: vi.fn().mockReturnValue({ eq: packagesDeleteEq }),
+            insert: packagesInsert,
+          };
+        }
+        if (table === "audit_log") {
+          return { insert: vi.fn().mockResolvedValue({ error: null }) };
+        }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: null }),
+        };
+      }),
+    });
+
+    const fd = new FormData();
+    fd.set("changeRequestId", "00000000-0000-0000-0000-000000000003");
+    const result = await approveChangeRequest(fd);
+    expect(result.success).toBe(true);
+    expect(eventsUpdate).toHaveBeenCalled();
+    expect(packagesDeleteEq).toHaveBeenCalled();
+    expect(packagesInsert).toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------

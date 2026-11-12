@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
@@ -15,6 +16,7 @@ type City = { id: number; name: string; state: string };
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { locale } = await params;
   const t = await getTranslations("profile");
+  const tNav = await getTranslations("nav");
 
   const supabase = await createClient();
   const {
@@ -44,10 +46,24 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const cities = (citiesData ?? []) as City[];
 
   // Pass only plain primitives to the client component (Next.js requirement).
+  const isApprovedOrganizer =
+    safeStr(profile?.role) === "organizer" &&
+    safeStrNullable(profile?.verification_status) === "approved";
+
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
       <h1 className="mb-1 text-2xl font-bold">{t("title")}</h1>
       <p className="mb-6 text-sm text-muted-foreground">{t("subtitle")}</p>
+      {isApprovedOrganizer ? (
+        <p className="mb-4 text-sm">
+          <Link
+            href={`/${locale}/organizer/events`}
+            className="font-medium underline-offset-2 hover:underline"
+          >
+            {tNav("myEvents")}
+          </Link>
+        </p>
+      ) : null}
       <ProfileForm
         fullName={safeStrNullable(profile?.full_name)}
         phone={safeStr(profile?.phone)}

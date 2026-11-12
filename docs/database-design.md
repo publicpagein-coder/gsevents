@@ -107,6 +107,7 @@ Kept empty after the unify migration. Do **not** write new rows. All app code re
 | `ticketing`                 | `ticketing_mode` NOT NULL DEFAULT `none`     | Reserved for Stage 2                                 |
 | `status`                    | `event_status` NOT NULL DEFAULT `draft`      | Guard trigger enforces allowed transitions           |
 | `rejection_reason`          | `text`                                       |                                                      |
+| `authority_letter_path`     | `text`                                       | Optional PDF in private `event-documents` bucket (FR-EVT-09) |
 | `created_at` / `updated_at` | `timestamptz`                                |                                                      |
 
 CHECK: `ticketing = 'none' OR visibility = 'public'` (ticketed events must be public in Stage 2).
@@ -122,6 +123,8 @@ CHECK: `ticketing = 'none' OR visibility = 'public'` (ticketed events must be pu
 | `deliverables` | `text`                       |                                     |
 | `slots_total`  | `int`                        | CHECK > 0                           |
 | `created_at`   | `timestamptz`                |                                     |
+
+Organizer writes allowed only when parent event status is `draft` or `rejected` (BR-15). Published package edits go through `event_change_requests.proposed_packages`.
 
 ### `interests`
 
@@ -275,3 +278,19 @@ Migration `20261111000000_unify_organizer_into_profiles.sql`:
 ### Earlier decisions migration (`20261110000000_stage1_decisions.sql`)
 
 See "Required Schema Changes" in `docs/srs-stage1.md` for the 10 Nov 2026 items (super_admin, settings, fees, change requests, authority letter, etc.). Those are covered by that migration file; keep this document aligned when further schema lands.
+
+### Applied — FR-EVT storage + package RLS (`20261112000000_fr_evt_storage_and_package_rls.sql`)
+
+- Private Storage bucket `event-documents` (PDF only, 5 MB). Path: `{organizer_id}/{event_id}/…`. Organizer + admin read; no public access.
+- `sponsorship_packages` write policy locked so organizers cannot mutate packages on `published` (or other non-draft/rejected) events; admins still can (change-request approve).
+
+### `event_change_requests` (from decisions migration)
+
+| Column | Notes |
+|--------|--------|
+| `event_id` | FK → events |
+| `proposed_fields` | jsonb event field snapshot |
+| `proposed_packages` | jsonb package list (null = no package change) |
+| `new_authority_letter_path` | optional new PDF path |
+| `status` | `pending` / `approved` / `rejected` |
+| Unique partial index | one pending row per `event_id` |
