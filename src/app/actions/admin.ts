@@ -281,7 +281,9 @@ export async function approveChangeRequest(formData: FormData): Promise<ActionRe
 
   const { data: cr } = await adminClient
     .from("event_change_requests")
-    .select("event_id, proposed_fields, proposed_packages, status")
+    .select(
+      "event_id, proposed_fields, proposed_packages, new_authority_letter_path, status",
+    )
     .eq("id", changeRequestId)
     .single();
 
@@ -290,23 +292,35 @@ export async function approveChangeRequest(formData: FormData): Promise<ActionRe
     return { success: false, error: "Change request is no longer pending" };
   }
 
-  // Apply proposed_fields to the events row.
-  // We build a typed partial update object matching Database events Update shape.
+  // Apply proposed_fields to the events row (FR-ADM-12 / FR-EVT-10).
   const fields = cr.proposed_fields as Record<string, unknown>;
 
   type EventUpdate = Database["public"]["Tables"]["events"]["Update"];
   const allowedFields: (keyof EventUpdate)[] = [
-    "title", "description", "venue", "season",
-    "start_date", "end_date", "expected_audience",
-    "audience_notes", "visibility", "authority_letter_path",
+    "title",
+    "description",
+    "event_type_id",
+    "city_id",
+    "venue",
+    "season",
+    "start_date",
+    "end_date",
+    "expected_audience",
+    "audience_notes",
+    "visibility",
+    "authority_letter_path",
   ];
 
   const eventUpdate: EventUpdate = {};
   for (const key of allowedFields) {
     if (key in fields) {
-      // Use Object.assign to stay within the typed shape
       (eventUpdate as Record<string, unknown>)[key] = fields[key];
     }
+  }
+
+  // Prefer explicit new_authority_letter_path column when present (FR-EVT-09).
+  if (cr.new_authority_letter_path) {
+    eventUpdate.authority_letter_path = cr.new_authority_letter_path;
   }
 
   if (Object.keys(eventUpdate).length > 0) {
@@ -318,7 +332,50 @@ export async function approveChangeRequest(formData: FormData): Promise<ActionRe
     if (eventErr) return { success: false, error: safeStr(eventErr.message) };
   }
 
-  // Mark the change request as approved
+  // Apply proposed_packages: full replace when non-null (BR-15).
+  if (cr.proposed_packages !== null && cr.proposed_packages !== undefined) {
+    const rawPackages = cr.proposed_packages;
+    if (!Array.isArray(rawPackages)) {
+      return { success: false, error: "Invalid proposed packages payload" };
+    }
+
+    const { error: delErr } = await adminClient
+      .from("sponsorship_packages")
+      .delete()
+      .eq("event_id", cr.event_id);
+    if (delErr) return { success: false, error: safeStr(delErr.message) };
+
+    if (rawPackages.length > 0) {
+      type PackageInsert = Database["public"]["Tables"]["sponsorship_packages"]["Insert"];
+      const rows: PackageInsert[] = [];
+      for (const item of rawPackages) {
+        if (!item || typeof item !== "object") {
+          return { success: false, error: "Invalid proposed package row" };
+        }
+        const row = item as Record<string, unknown>;
+        const name = typeof row["name"] === "string" ? row["name"] : null;
+        const price = row["price_paise"];
+        if (!name || typeof price !== "number" || price < 0) {
+          return { success: false, error: "Invalid proposed package row" };
+        }
+        rows.push({
+          event_id: cr.event_id,
+          name,
+          price_paise: price,
+          deliverables:
+            typeof row["deliverables"] === "string" ? row["deliverables"] : null,
+          slots_total:
+            typeof row["slots_total"] === "number" ? row["slots_total"] : null,
+        });
+      }
+
+      const { error: insErr } = await adminClient
+        .from("sponsorship_packages")
+        .insert(rows);
+      if (insErr) return { success: false, error: safeStr(insErr.message) };
+    }
+  }
+
   const { error: crErr } = await adminClient
     .from("event_change_requests")
     .update({

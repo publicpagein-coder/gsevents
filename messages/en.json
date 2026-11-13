@@ -32,7 +32,8 @@
     "profile": "Profile",
     "admin": "Admin",
     "signIn": "Sign In",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "myEvents": "My events"
   },
   "locale": {
     "en": "English",
@@ -317,6 +318,98 @@
       "supportOnly": "Marking refunds requires the support permission.",
       "empty": "No fees recorded yet.",
       "actions": "Actions"
+    }
+  },
+  "events": {
+    "backToList": "Back to my events",
+    "backToDetail": "Back to event",
+    "list": {
+      "title": "My events",
+      "subtitle": "Create drafts, pay the listing fee, and track review status.",
+      "create": "New event",
+      "empty": "You have not created any events yet."
+    },
+    "new": {
+      "title": "Create event",
+      "subtitle": "Saved as a draft. Pay the listing fee when you are ready to submit for review."
+    },
+    "edit": {
+      "title": "Edit event",
+      "subtitle": "Update the draft or rejected listing and its packages.",
+      "changeRequestTitle": "Request changes",
+      "changeRequestSubtitle": "Proposed edits go to admin review. The live listing stays unchanged until approved."
+    },
+    "detail": {
+      "summary": "Details",
+      "rejectedTitle": "Rejected",
+      "pendingChangeTitle": "Change request pending",
+      "pendingChangeBody": "Submitted {date}. The published listing is unchanged until an admin reviews it."
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_review": "Pending review",
+      "published": "Published",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private (sponsors only)"
+    },
+    "form": {
+      "title": "Event title",
+      "description": "Description",
+      "eventType": "Event type",
+      "eventTypePlaceholder": "Select type",
+      "city": "City",
+      "cityPlaceholder": "Select city",
+      "venue": "Venue",
+      "season": "Season tag",
+      "seasonPlaceholder": "e.g. navratri-2027",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "dates": "Dates",
+      "expectedAudience": "Expected audience",
+      "audienceNotes": "Audience notes",
+      "visibility": "Visibility",
+      "visibilityPublic": "Public",
+      "visibilityPrivate": "Private (sponsors only)",
+      "visibilityHelp": "Private events are visible to signed-in sponsors only.",
+      "ticketingHidden": "Ticketing is not available in Stage 1 and stays set to none.",
+      "authorityLetter": "Government authority letter (optional)",
+      "authorityLetterHelp": "PDF only, up to 5 MB. Helps admins verify the event. Only you and admins can view it.",
+      "authorityLetterPresent": "A letter is already on file. Upload a new PDF to replace it.",
+      "authorityLetterMissing": "No letter uploaded yet.",
+      "submitCreate": "Save draft",
+      "submitSave": "Save changes",
+      "submitChangeRequest": "Submit for review",
+      "changeRequestNoticeTitle": "Published event",
+      "changeRequestNoticeBody": "Your changes will be reviewed by an admin. Sponsors keep seeing the current published version until then."
+    },
+    "packages": {
+      "title": "Sponsorship packages",
+      "subtitle": "Add at least one package with a name and price.",
+      "add": "Add package",
+      "remove": "Remove",
+      "itemLabel": "Package {n}",
+      "name": "Package name",
+      "priceRupees": "Price (₹)",
+      "pricePreview": "Stored as {amount}",
+      "deliverables": "Deliverables",
+      "slots": "Number of slots",
+      "slotsOptional": "Optional",
+      "slotsCount": "{count} slots",
+      "empty": "No packages yet."
+    },
+    "actions": {
+      "payAndSubmit": "Pay listing fee",
+      "resubmit": "Resubmit for review",
+      "cancelEvent": "Cancel event",
+      "cancelConfirm": "Cancel this event? The listing fee is not refunded.",
+      "deleteConfirm": "Delete this draft permanently?",
+      "requestChanges": "Request changes",
+      "viewLetter": "View authority letter"
     }
   }
 }
